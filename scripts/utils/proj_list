@@ -14,11 +14,10 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 project_root_directories=(
-  "$HOME/Code/codely/"*
-  "$HOME/Code/lambdish/"*
-  "$HOME/Code/rgomezcasas/"*
+  "$HOME/ws"*
   "$DOTFILES_PATH"
 )
+
 [[ "$choose" == "false" ]] && filterer="fzf" || filterer="choose -c 181818"
 project_directories=$(printf '%s\n' "${project_root_directories[@]}" | xargs ls -d | grep -v "_")
 
