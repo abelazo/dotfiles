@@ -8,7 +8,13 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   count_files_recursive_per_directory
+##?   filecountd [<folder>]
 docs::eval "$@"
 
-ls -d ./*/ | xargs -I _ sh -c "find \"_\" -type f | wc -l | xargs echo \"_\""
+if [ $# -lt 1 ]; then
+    folder=$(pwd)
+else
+    folder=$(realpath $1)
+fi
+
+ls -d ${folder}/*/ | xargs -I _ sh -c "find \"_\" -type f | wc -l | xargs echo \"_\""
