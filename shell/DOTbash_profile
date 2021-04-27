@@ -1,0 +1,161 @@
+# Bash Profile for abelazo's MacBookPro
+
+################################################################################
+# GLOBAL CONFIGURATION
+################################################################################
+# Bash history
+shopt -s histappend                     # Append commands instead of overriting file
+shopt -s cmdhist                        # Store multi-line commands in a single line
+export HISTCONTROL=ignoredups
+export HISTSIZE=5000
+export HISTTIMEFORMAT="%h %d %H:%M:%S "
+
+# Dotfiles
+export DOTFILES_PATH=$HOME/ws/orangebank/.dotfiles
+
+# Aliases
+source $HOME/.alias
+
+# Path
+paths=(
+  "$DOTFILES_PATH/bin"
+  "$HOME/ws/tw/adr-tools/src"
+  "/usr/local/bin"
+  "/usr/local/sbin"
+  "/usr/bin"
+  "/bin"
+  "/usr/sbin"
+  "/sbin"
+)
+
+PATH=$(
+  IFS=":"
+  echo "${paths[*]}"
+)
+export PATH
+
+################################################################################
+# LOOK AND FEEL
+################################################################################
+# Disable the bash deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# Dynamically customize prompt
+# function prompt_callback {
+#   local initials=$(git mob-print --initials)
+#   if [[ -n "${initials}" ]]; then
+#     echo -n " [${initials}]"
+#   fi
+# }
+
+# Prompt
+if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+  __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
+  # GIT_PROMPT_START=...    # uncomment for custom prompt start sequence
+  # GIT_PROMPT_END= echo "HOLA"      # uncomment for custom prompt end sequence
+  source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+fi
+
+################################################################################
+# FUNCTIONS
+################################################################################
+# Diff tool
+function ediff() {
+  emacs --eval "(ediff-files \"$1\" \"$2\")"
+}
+export -f ediff
+export DIFF_COMMAND="ediff"
+
+function ttd() {
+  gdate -d @$(( ($1 + 500) / 1000 ))
+}
+
+function kctx() {
+  if [ -z $1 ]; then
+    kubectl config get-contexts
+  else
+    if [[ "$1" == *.ro ]]; then
+      kubectl config use-context ${1}.obkplatform.com
+    else
+      kubectl config use-context ${1}.proyecto-sol.es
+    fi
+
+    
+  fi
+}
+
+function portainer() {
+  docker volume create portainer_data
+  docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+}
+
+################################################################################
+# COMPLETION
+################################################################################
+# Bash completion
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
+# Dotfiles
+_dot_completions()
+{
+    if [ ${#COMP_WORDS[@]} -gt 3 ]; then
+        COMPREPLY=()
+	return
+    fi
+
+    if [ "${#COMP_WORDS[@]}" != "2" ]; then
+        contextIndex=$(( ${COMP_CWORD} - 1 ))
+	currentContext=${COMP_WORDS[${contextIndex}]}
+	local availableScripts=$(find $DOTFILES_PATH/scripts/${currentContext} -mindepth 1 -maxdepth 1 -type f -exec basename '{}' \;)
+	COMPREPLY=($(compgen -W "${availableScripts}" "${COMP_WORDS[2]}"))
+    else
+	local contexList=$(find $DOTFILES_PATH/scripts -mindepth 1 -maxdepth 1 -exec basename '{}' \;)
+	COMPREPLY=($(compgen -W "${contexList}" "${COMP_WORDS[1]}"))
+    fi
+}
+complete -o default -F _dot_completions dot
+
+# Brew
+if type brew &>/dev/null; then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  else
+    for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+      [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+    done
+  fi
+fi
+
+# Kubectl 
+kubectlCompletionBash=`mktemp`
+kubectl completion bash > ${kubectlCompletionBash}
+source ${kubectlCompletionBash}
+rm ${kubectlCompletionBash}
+
+################################################################################
+# OB
+################################################################################
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+
+# Git-related
+function ob_pull() {
+  for gitFolder in `find /Users/abelazo/ws/orangebank -name .git`; do
+    repo=$(dirname ${gitFolder})
+    echo "[INFO] Updating ${repo}"
+    pushd ${repo} >& /dev/null
+    git pull --rebase --autostash
+    git remote prune origin
+    popd >& /dev/null
+  done
+}
+
+function ob_branch() {
+  for gitFolder in `find /Users/abelazo/ws/orangebank -name .git`; do
+    repo=$(dirname ${gitFolder})
+    echo "[INFO] Branches on ${repo}"
+    pushd ${repo} >& /dev/null
+    git branch -avv
+    popd >& /dev/null
+  done
+}

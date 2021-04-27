@@ -1,0 +1,18 @@
+alias emacs='emacs -nw'
+alias ls='ls -G'
+
+################################################################################
+# Docker
+################################################################################
+alias dc_stopall='docker stop $(docker container ls -a -q)'
+alias dc_rmall='docker rm $(docker container ls -a -q)'
+alias ds_prune='docker system prune -a -f'
+alias dv_prune='docker volume prune -f'
+
+################################################################################
+# OBES
+################################################################################
+alias ob_customerId="cut -d ',' -f 1"
+alias ob_accountId="cut -d ',' -f 2"
+alias ob_iban="cut -d ',' -f 3"
+

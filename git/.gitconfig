@@ -1,0 +1,53 @@
+[user]
+    name=Abel Guillen
+    email=abel.guillenfuerte@thoughtworks.com
+    signingkey=DD168AC24D94CBBD
+
+[alias]
+    lg1=log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %G? - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    lg2=log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %G? - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+    lg=!"git lg1"
+    header=show --pretty=fuller --show-signature --no-patch
+    files=diff-tree --no-commit-id --name-only -r
+    files-range=log --name-only --pretty=oneline --full-index
+
+[apply]
+	# Detect whitespace errors when applying a patch
+	whitespace = fix
+
+[credential]
+	helper = osxkeychain
+
+[commit]
+	gpgsign = true
+
+[core]
+	excludesfile = ~/.gitignore_global
+	attributesfile = ~/.gitattributes
+	editor = emacs -nw
+
+[fetch]
+    prune = true
+
+[gpg]
+	program = /usr/local/bin/gpg
+
+[help]
+	autocorrect = 1
+
+[pull]
+	rebase = true
+
+[rebase]
+    autoStash = true
+
+[tag]
+	gpgsign = true
+
+# Project includes
+[includeIf "gitdir:~/ws/personal/"]
+    path=~/ws/personal/personal.gitconfig
+
+[includeIf "gitdir:~/ws/orangebank/"]
+    path=~/ws/orangebank/ob.gitconfig
+

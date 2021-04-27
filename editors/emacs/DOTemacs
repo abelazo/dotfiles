@@ -1,0 +1,108 @@
+;; Startup
+(setq inhibit-startup-screen t)
+
+;; Display configuration
+(setq column-number-mode t)
+
+;; Customize faces to increase contrast
+(custom-set-faces
+ ;; Increase contrast in diff mode
+ '(ediff-current-diff-A ((t (:foreground "brown" :background "blue"))))
+ '(ediff-fine-diff-A ((t (:foreground "white" :background "red")))) 
+ '(ediff-odd-diff-A ((t (:foreground "black" :background "blue"))))
+ '(ediff-even-diff-A ((t (:foreground "black" :background "blue"))))
+ '(ediff-current-diff-B ((t (:foreground "brown" :background "blue"))))
+ '(ediff-fine-diff-B ((t (:foreground "white" :background "red")))) 
+ '(ediff-odd-diff-B ((t (:foreground "black" :background "blue"))))
+ '(ediff-even-diff-B ((t (:foreground "black" :background "blue"))))
+ ;; Improve GUI mode
+ '(default ((t (:stipple nil :slant normal :weight normal :height 175 :width normal :foundry "unknown"))))
+ '(font-lock-comment-face ((t (:foreground "darkorange4"))))
+ '(font-lock-function-name-face ((t (:foreground "navy"))))
+ '(font-lock-keyword-face ((t (:foreground "red4"))))
+ '(font-lock-type-face ((t (:foreground "black"))))
+ '(linum ((t (:inherit shadow :background "gray95"))))
+)
+
+;; Start full screen
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; Backups
+(setq backup-directory-alist `(("." . "~/.emacs.d/auto-save-list")))
+
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
+
+;; MELPA
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  ;;(add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (evil-numbers))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; ediff
+;; Usage: emacs -diff file1 file2
+(defun command-line-diff (switch)
+      (let ((file1 (pop command-line-args-left))
+            (file2 (pop command-line-args-left)))
+        (ediff file1 file2)))
+    
+    (add-to-list 'command-switch-alist '("diff" . command-line-diff))
+    
+;; turn off whitespace checking:
+(setq ediff-diff-options "-w")
+
+;; Never use tabs
+(progn
+  (setq-default indent-tabs-mode nil)
+  )
+;; set default tab char's display width to 4 spaces
+(setq-default tab-width 4) ; emacs 23.1 to 26 default to 8
+
+;; set current buffer's tab char's display width to 4 spaces
+(setq tab-width 4)
+
+;; parent-mode (parenthesis)
+(show-paren-mode t)
+
+;; EVIL NUMBERS
+(global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+(global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
+
+;; Format backtrace
+(defun format-backtrace ()
+(interactive)
+(goto-char 1)
+    (while (re-search-forward "\\\\n" nil t)
+        (replace-match "\n" t nil))
+(goto-char 1)
+    (while (re-search-forward "\\\\t" nil t)
+        (replace-match "    " t nil))
+(goto-char 1))
