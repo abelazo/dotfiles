@@ -10,8 +10,14 @@ export HISTCONTROL=ignoredups
 export HISTSIZE=5000
 export HISTTIMEFORMAT="%h %d %H:%M:%S "
 
+# hstr
+export HSTR_CONFIG=hicolor
+
+# fzf
+export FZF_DEFAULT_OPTS="--bind='alt-enter:execute(emacs -nw {})+abort'"
+
 # Dotfiles
-export DOTFILES_PATH=$HOME/ws/orangebank/.dotfiles
+# export DOTFILES_PATH=$HOME/ws/personal/.dotfiles
 
 # Aliases
 source $HOME/.alias
@@ -59,6 +65,11 @@ fi
 ################################################################################
 # FUNCTIONS
 ################################################################################
+# Brew rmtree
+function brmtree() {
+  brew rm $(join <(brew leaves) <(brew deps $1))
+}
+
 # Diff tool
 function ediff() {
   emacs --eval "(ediff-files \"$1\" \"$2\")"
@@ -74,13 +85,7 @@ function kctx() {
   if [ -z $1 ]; then
     kubectl config get-contexts
   else
-    if [[ "$1" == *.ro ]]; then
-      kubectl config use-context ${1}.obkplatform.com
-    else
-      kubectl config use-context ${1}.proyecto-sol.es
-    fi
-
-    
+    kubectl config use-context ${1}
   fi
 }
 
@@ -134,28 +139,7 @@ source ${kubectlCompletionBash}
 rm ${kubectlCompletionBash}
 
 ################################################################################
-# OB
+# JAVA
 ################################################################################
 export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
 
-# Git-related
-function ob_pull() {
-  for gitFolder in `find /Users/abelazo/ws/orangebank -name .git`; do
-    repo=$(dirname ${gitFolder})
-    echo "[INFO] Updating ${repo}"
-    pushd ${repo} >& /dev/null
-    git pull --rebase --autostash
-    git remote prune origin
-    popd >& /dev/null
-  done
-}
-
-function ob_branch() {
-  for gitFolder in `find /Users/abelazo/ws/orangebank -name .git`; do
-    repo=$(dirname ${gitFolder})
-    echo "[INFO] Branches on ${repo}"
-    pushd ${repo} >& /dev/null
-    git branch -avv
-    popd >& /dev/null
-  done
-}

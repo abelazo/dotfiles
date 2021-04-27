@@ -2,7 +2,7 @@
 
 ## On a new MacOS (migrating from another)
 * Update Mac 
-* Backup SSH keys (`~/.ssh`) from the previous computer to the new one
+*  SSH keys (`~/.ssh`) from the previous computer to the new one
   - `chmod -R 700 ~/.ssh`
 * Migrate GPG keys (`~/.gnupg`) from the previous computer to the new one
   - `chmod -R 700 ~/.gnupg`

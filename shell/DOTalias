@@ -1,5 +1,14 @@
 alias emacs='emacs -nw'
 alias ls='ls -G'
+alias tmp='cd $HOME/tmp'
+
+# Firefox aliases
+alias firefox='/Applications/Firefox.app/Contents/MacOS/firefox'
+alias twco="firefox 'ext+container:name=TW&url=https://wd3.myworkday.com/thoughtworks/d/task/2997\$5196.htmld'"
+alias twci="firefox 'ext+container:name=TW&url=https://wd3.myworkday.com/thoughtworks/d/task/2997\$5195.htmld'"
+
+# Preview all files in the current subtree 
+alias preview="fzf --preview 'bat --color \"always\" {}'"
 
 ################################################################################
 # Docker
@@ -8,11 +17,4 @@ alias dc_stopall='docker stop $(docker container ls -a -q)'
 alias dc_rmall='docker rm $(docker container ls -a -q)'
 alias ds_prune='docker system prune -a -f'
 alias dv_prune='docker volume prune -f'
-
-################################################################################
-# OBES
-################################################################################
-alias ob_customerId="cut -d ',' -f 1"
-alias ob_accountId="cut -d ',' -f 2"
-alias ob_iban="cut -d ',' -f 3"
 

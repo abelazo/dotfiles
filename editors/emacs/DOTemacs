@@ -6,23 +6,24 @@
 
 ;; Customize faces to increase contrast
 (custom-set-faces
- ;; Increase contrast in diff mode
- '(ediff-current-diff-A ((t (:foreground "brown" :background "blue"))))
- '(ediff-fine-diff-A ((t (:foreground "white" :background "red")))) 
- '(ediff-odd-diff-A ((t (:foreground "black" :background "blue"))))
- '(ediff-even-diff-A ((t (:foreground "black" :background "blue"))))
- '(ediff-current-diff-B ((t (:foreground "brown" :background "blue"))))
- '(ediff-fine-diff-B ((t (:foreground "white" :background "red")))) 
- '(ediff-odd-diff-B ((t (:foreground "black" :background "blue"))))
- '(ediff-even-diff-B ((t (:foreground "black" :background "blue"))))
- ;; Improve GUI mode
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(default ((t (:stipple nil :slant normal :weight normal :height 175 :width normal :foundry "unknown"))))
+ '(ediff-current-diff-A ((t (:foreground "brown" :background "blue"))))
+ '(ediff-current-diff-B ((t (:foreground "brown" :background "blue"))))
+ '(ediff-even-diff-A ((t (:foreground "black" :background "blue"))))
+ '(ediff-even-diff-B ((t (:foreground "black" :background "blue"))))
+ '(ediff-fine-diff-A ((t (:foreground "white" :background "red"))))
+ '(ediff-fine-diff-B ((t (:foreground "white" :background "red"))))
+ '(ediff-odd-diff-A ((t (:foreground "black" :background "blue"))))
+ '(ediff-odd-diff-B ((t (:foreground "black" :background "blue"))))
  '(font-lock-comment-face ((t (:foreground "darkorange4"))))
  '(font-lock-function-name-face ((t (:foreground "navy"))))
  '(font-lock-keyword-face ((t (:foreground "red4"))))
  '(font-lock-type-face ((t (:foreground "black"))))
- '(linum ((t (:inherit shadow :background "gray95"))))
-)
+ '(linum ((t (:inherit shadow :background "gray95")))))
 
 ;; Start full screen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -59,13 +60,8 @@ There are two things you can do about this warning:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (evil-numbers))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+ '(package-selected-packages '(magit evil-numbers)))
+
 
 ;; ediff
 ;; Usage: emacs -diff file1 file2
@@ -91,6 +87,18 @@ There are two things you can do about this warning:
 
 ;; parent-mode (parenthesis)
 (show-paren-mode t)
+
+;; Duplicate line
+(defun duplicate-line()
+  (interactive)
+  (move-beginning-of-line 1)
+  (kill-line)
+  (yank)
+  (open-line 1)
+  (next-line 1)
+  (yank)
+)
+;;(global-set-key (kbd "C-d") 'duplicate-line)
 
 ;; EVIL NUMBERS
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
