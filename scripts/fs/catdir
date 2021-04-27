@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Preview all files (in all folders) for the current directory
+#?? 1.0.0
+##?
+##? Usage:
+##?   catdir [<folder>]
+#docs::eval "$@"
+
+if [ -z ${1+x} ]; then
+    working_folder=$(realpath $(pwd))
+else
+    working_folder=$(realpath $1)
+fi
+
+pushd ${working_folder}
+fzf --preview 'bat {}'
+popd
