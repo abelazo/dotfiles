@@ -46,3 +46,4 @@ else
 
   "${DOTFILES_PATH}/scripts/${context}/${command}" "$@"
 fi
+
