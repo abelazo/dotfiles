@@ -84,6 +84,9 @@ There are two things you can do about this warning:
 
 ;; set current buffer's tab char's display width to 4 spaces
 (setq tab-width 4)
+;; except for bash
+(setq sh-basic-offset 2)
+(setq sh-indentation 2)
 
 ;; parent-mode (parenthesis)
 (show-paren-mode t)
