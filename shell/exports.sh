@@ -1,11 +1,22 @@
-export JAVA_HOME='/Library/Java/JavaVirtualMachines/openjdk-14.0.2.jdk/Contents/Home'
-export GEM_HOME="$HOME/.gem"
-export GOPATH="$HOME/.go"
+export HISTCONTROL=ignoredups
+export HISTSIZE=5000
+export HISTTIMEFORMAT="%h %d %H:%M:%S "
 
-export FZF_DEFAULT_OPTS='
+# hstr
+export HSTR_CONFIG=hicolor
+
+# fzf
+export FZF_DEFAULT_OPTS="
+  --bind='alt-enter:execute(emacs -nw {})+abort'
   --color=pointer:#ebdbb2,bg+:#3c3836,fg:#ebdbb2,fg+:#fbf1c7,hl:#8ec07c,info:#928374,header:#fb4934
   --reverse
-'
+"
+
+# Disable the bash deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# Java
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
 
 export HOMEBREW_AUTO_UPDATE_SECS=604800 # 1 week
 export HOMEBREW_NO_ANALYTICS=true
@@ -17,11 +28,8 @@ export LC_ALL="en_US.UTF-8"
 export path=(
   "$HOME/bin"
   "$DOTFILES_PATH/bin"
+  "$HOME/ws/tw/adr-tools/src"
   "$JAVA_HOME/bin"
-  "$GEM_HOME/bin"
-  "$GOPATH/bin"
-  "/usr/local/opt/ruby/bin"
-  "/usr/local/opt/python/libexec/bin"
   "/usr/local/bin"  # This contains all Brew binaries (zsh...)
   "/usr/local/sbin" # This contains all Brew binaries
   "/bin"            # macOS zsh is here

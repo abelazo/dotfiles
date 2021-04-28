@@ -1,33 +1,27 @@
-function j() {
-  fname=$(declare -f -F _z)
-
-  [ -n "$fname" ] || source "$DOTFILES_PATH/modules/z/z.sh"
-
-  _z "$1"
+# Brew rmtree
+function brmtree() {
+  brew rm $(join <(brew leaves) <(brew deps $1))
 }
 
-function recent_dirs() {
-  # This script depends on pushd. It works better with autopush enabled in ZSH
-  escaped_home=$(echo $HOME | sed 's/\//\\\//g')
-  selected=$(dirs -p | sort -u | fzf)
+# Diff tool
+function ediff() {
+  emacs --eval "(ediff-files \"$1\" \"$2\")"
+}
+export -f ediff
 
-  cd "$(echo "$selected" | sed "s/\~/$escaped_home/")" || echo "Invalid directory"
+function ttd() {
+  gdate -d @$(( ($1 + 500) / 1000 ))
 }
 
-reverse-search() {
-  local selected num
-  setopt localoptions noglobsubst noposixbuiltins pipefail HIST_FIND_NO_DUPS 2> /dev/null
-
-  selected=( $(fc -rl 1 |
-    FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS --query=${(qqq)LBUFFER} +m" fzf) )
-  local ret=$?
-  if [ -n "$selected" ]; then
-    num=$selected[1]
-    if [ -n "$num" ]; then
-      zle vi-fetch-history -n $num
-    fi
+function kctx() {
+  if [ -z $1 ]; then
+    kubectl config get-contexts
+  else
+    kubectl config use-context ${1}
   fi
-  zle redisplay
-  typeset -f zle-line-init >/dev/null && zle zle-line-init
-  return $ret
+}
+
+function portainer() {
+  docker volume create portainer_data
+  docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 }

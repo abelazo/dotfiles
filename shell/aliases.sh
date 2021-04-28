@@ -1,38 +1,25 @@
-# Enable aliases to be sudo’ed
-alias sudo='sudo '
+alias emacs='emacs -nw'
+alias ls='ls -G'
+alias tmp='cd $HOME/tmp'
 
-alias ..="cd .."
-alias ...="cd ../.."
-alias ll="exa -l"
-alias la="exa -la"
+# Preview all files in the current subtree 
+alias preview="fzf --preview 'bat --color \"always\" {}'"
 
-# Jumps
-alias ~="cd ~"
-alias tmp="cd ~/Desktop/tmp"
-alias code='cd ~/Code'
-alias mines="cd ~/Code/mines"
-alias codely="cd ~/Code/codely"
+# Docker
+alias dc_stopall='docker stop $(docker container ls -a -q)'
+alias dc_rmall='docker rm $(docker container ls -a -q)'
+alias ds_prune='docker system prune -a -f'
+alias dv_prune='docker volume prune -f'
 
 # Git
-alias gaa="git add -A"
-alias gc="dot git commit"
-alias gca="git add --all && git commit --amend --no-edit"
-alias gco="git checkout"
-alias gd="dot git pretty-diff"
-alias gs="git status -sb"
-alias gf="git fetch --all -p"
-alias gps="git push"
-alias gpsf="git push --force"
-alias gpl="git pull --rebase --autostash"
-alias gl="dot git pretty-log"
-
-alias up="dot package update_all"
-alias copy='pbcopy'
-alias dc='dot docker connect'
-alias vcode='/usr/local/bin/code'
-alias vt='vim $(mktemp $TMPDIR/$(uuidgen).txt)'
-alias htop='btm'
-
-alias i.='(idea $PWD &>/dev/null &)'
-alias c.='(code $PWD &>/dev/null &)'
-alias o.='open .'
+# alias gaa="git add -A"
+# alias gc="dot git commit"
+# alias gca="git add --all && git commit --amend --no-edit"
+# alias gco="git checkout"
+# alias gd="dot git pretty-diff"
+# alias gs="git status -sb"
+# alias gf="git fetch --all -p"
+# alias gps="git push"
+# alias gpsf="git push --force"
+# alias gpl="git pull --rebase --autostash"
+# alias gl="dot git pretty-log"
