@@ -9,7 +9,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   catdir [<folder>]
-#docs::eval "$@"
+docs::eval "$@"
 
 if [ -z ${1+x} ]; then
     working_folder=$(realpath $(pwd))

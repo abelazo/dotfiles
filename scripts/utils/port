@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? List the processes listening to a specific port
+#?? 1.0.0
+##?
+##? Usage:
+##?   port <port_number>
+##?
+docs::eval "$@"
+
+lsof -nP -iTCP -sTCP:LISTEN | grep $1
