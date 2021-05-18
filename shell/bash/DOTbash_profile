@@ -1,4 +1,5 @@
 export DOTFILES_PATH=$HOME/ws/personal/dotfiles
+export DOTFILES_PATHS=$DOTFILES_PATH
 
 # Bash history
 shopt -s histappend                     # Append commands instead of overriting file
@@ -27,4 +28,9 @@ export PATH
 # Other completions
 for bash_file in ${DOTFILES_PATH}/shell/bash/completions/*; do
   source "$bash_file"
+done
+
+# Source specific profiles
+for profile_file in `find $HOME/ws -maxdepth 2 -name "*.bash_profile"`; do
+  source ${profile_file}
 done
