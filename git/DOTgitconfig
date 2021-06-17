@@ -32,3 +32,6 @@
 [includeIf "gitdir:~/ws/personal/"]
     path=~/ws/personal/personal.gitconfig
 
+[includeIf "gitdir:~/ws/tesco/"]
+	path = ~/ws/tesco/tesco.gitconfig
+
