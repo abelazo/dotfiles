@@ -3,7 +3,7 @@ export HISTSIZE=5000
 export HISTTIMEFORMAT="%h %d %H:%M:%S "
 
 # hstr
-export HSTR_CONFIG=hicolor
+export HSTR_CONFIG=hicolorm,case-sensitive,raw-history-view
 
 # fzf
 export FZF_DEFAULT_OPTS="
