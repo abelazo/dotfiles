@@ -11,7 +11,6 @@ tap "versent/taps"
 #
 # brew formulae
 #
-brew "ansible"
 brew "aws-iam-authenticator"
 brew "awscli"
 brew "bash"
@@ -36,7 +35,6 @@ brew "kubernetes-cli"
 brew "maven"
 brew "node"
 brew "pstree"
-brew "spring-io/tap/spring-boot"
 brew "hashicorp/tap/terraform"
 brew "terragrunt"
 brew "tmux"
