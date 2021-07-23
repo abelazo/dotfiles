@@ -3,6 +3,7 @@
 
 ;; Display configuration
 (setq column-number-mode t)
+(global-display-line-numbers-mode)
 
 ;; Customize faces to increase contrast
 (custom-set-faces
