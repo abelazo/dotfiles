@@ -14,7 +14,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 project_root_directories=(
-  "$HOME/ws"*
+  "$HOME/ws/work/"*
   "$DOTFILES_PATH"
 )
 

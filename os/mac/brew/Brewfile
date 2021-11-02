@@ -1,10 +1,10 @@
 #
 # Taps
 #
+tap beeftornado/rmtree
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
-tap "beeftornado/rmtree"
 tap "hashicorp/tap"
 tap "pivotal/tap"
 tap "versent/taps"
@@ -48,11 +48,8 @@ brew "zsh-completions"
 #
 # Cask
 #
-cask "dbeaver-community"
 cask "emacs"
-cask "kafka-tool"
-cask "meld"
-cask "pdftotext"
+cask "rectangle"
 #
 #
 #mas "Amphetamine", id: 937984704

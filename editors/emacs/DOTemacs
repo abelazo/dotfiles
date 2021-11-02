@@ -82,6 +82,7 @@ There are two things you can do about this warning:
   )
 ;; set default tab char's display width to 4 spaces
 (setq-default tab-width 4) ; emacs 23.1 to 26 default to 8
+(setq js-indent-level 2)
 
 ;; set current buffer's tab char's display width to 4 spaces
 (setq tab-width 4)
