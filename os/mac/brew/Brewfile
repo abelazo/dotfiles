@@ -11,6 +11,7 @@ tap "versent/taps"
 #
 # brew formulae
 #
+brew "1password-cli"
 brew "aws-iam-authenticator"
 brew "awscli"
 brew "bash"
