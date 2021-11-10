@@ -1,11 +1,11 @@
 #
 # Taps
-#
-tap beeftornado/rmtree
+tap "beeftornado/rmtree"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
 tap "hashicorp/tap"
+tap "mike-engel/jwt-cli"
 tap "pivotal/tap"
 tap "versent/taps"
 #
@@ -34,6 +34,7 @@ brew "htop"
 brew "httpie"
 brew "ispell"
 brew "jq"
+brew "jwt-cli"
 brew "kubernetes-cli"
 brew "maven"
 brew "node"
