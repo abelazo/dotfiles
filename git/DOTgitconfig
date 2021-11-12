@@ -26,6 +26,9 @@
 [pull]
     rebase = true
 
+[push]
+    gpgSign = if-asked
+
 [rebase]
     autoStash = true
 
