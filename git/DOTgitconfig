@@ -32,6 +32,9 @@
 [rebase]
     autoStash = true
 
+[diff]
+    colorMoved = default
+
 [pager]
     diff = delta
     show = delta
