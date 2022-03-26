@@ -4,7 +4,6 @@ tap "beeftornado/rmtree"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
-tap "hashicorp/tap"
 tap "mike-engel/jwt-cli"
 tap "pivotal/tap"
 tap "versent/taps"
@@ -40,19 +39,16 @@ brew "kubernetes-cli"
 brew "maven"
 brew "node"
 brew "pstree"
-brew "hashicorp/tap/terraform"
-brew "terragrunt"
-brew "tmux"
 brew "versent/taps/saml2aws"
 brew "watch"
 brew "wget"
-brew "zsh"
-brew "zsh-completions"
 #
 # Cask
 #
 cask "emacs"
+cask "meld"
 cask "rectangle"
+cask "vlc"
 #
 #
 #mas "Amphetamine", id: 937984704
