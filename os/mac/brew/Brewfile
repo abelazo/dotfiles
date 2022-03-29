@@ -10,7 +10,6 @@ tap "versent/taps"
 #
 # brew formulae
 #
-brew "1password-cli"
 brew "aws-iam-authenticator"
 brew "awscli"
 brew "bash"
@@ -27,11 +26,11 @@ brew "git"
 brew "git-delta"
 brew "git-gui"
 brew "gnu-sed"
-brew "gradle"
-brew "gradle-completion"
+#brew "gradle"
+#brew "gradle-completion"
 brew "hstr"
 brew "htop"
-brew "httpie"
+# brew "httpie" # use pip3 instead
 brew "ispell"
 brew "jq"
 brew "jwt-cli"
@@ -45,7 +44,7 @@ brew "wget"
 #
 # Cask
 #
-cask "emacs"
+# cask "1password-cli" v2.0 is required
 cask "meld"
 cask "rectangle"
 cask "vlc"
