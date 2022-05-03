@@ -41,6 +41,8 @@ brew "pstree"
 brew "versent/taps/saml2aws"
 brew "watch"
 brew "wget"
+#brew "ykman"           # Yubikey manager
+#brew "yubico-piv-tool" # Yubikey PIV module
 #
 # Cask
 #
