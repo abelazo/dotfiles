@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Show branches age (author date) in current git repo
+##? Use -r for remote branches
+##? 
+#?? 1.0.0
+##?
+##? Usage:
+##?   branchAge [-r]
+docs::eval "$@"
+
+git branch ${1} --sort=-authordate --format '%(authordate:iso) %(align:left,25)%(refname:short)%(end) %(subject)'
