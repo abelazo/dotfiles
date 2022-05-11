@@ -13,4 +13,6 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   branchAge [-r]
 docs::eval "$@"
 
-git branch ${1} --sort=-authordate --format '%(authordate:iso) %(align:left,25)%(refname:short)%(end) %(subject)'
+remote=${1:-""}
+
+git branch ${remote} --sort=-authordate --format '%(authordate:iso) %(align:left,25)%(refname:short)%(end) %(subject)'
