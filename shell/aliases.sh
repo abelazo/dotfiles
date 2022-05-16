@@ -23,3 +23,6 @@ alias dv_prune='docker volume prune -f'
 # alias gpsf="git push --force"
 # alias gpl="git pull --rebase --autostash"
 # alias gl="dot git pretty-log"
+
+# Kubernetes
+source "${DOTFILES_PATH}/shell/kubernetes/kubectl_aliases"
