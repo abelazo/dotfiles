@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Starts sampling the MacBook temperature (requries sudo)
+#?? 1.0.0
+##?
+##? Usage:
+##?   temperature
+docs::eval "$@"
+
+sudo powermetrics -s smc
