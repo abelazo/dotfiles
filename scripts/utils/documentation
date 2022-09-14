@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Example of dotfiles documentation
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   documentation <environment> <arg1> [--fields=<fields>] [--country=<country>] [-vV]
+##?   documentation <another_command>
+##?
+##? Arguments:
+##?   environment      Description of environment
+##?   arg1             Description of arg1
+##?   fields           Description of fields
+##?   country          Description of country
+##?   another_command  Description of another_command
+##?
+##? Options:
+##?   -c, --country=<country>  Country [default: CT]
+##?   -f, --fields=<fields>    Fields to be shown
+##?   -v                       Show response header/body
+##?   -V                       Show request and response header/body
+##?
+docs::eval "$@"
+
+echo ${another_command}
+echo ${environment}
+echo ${arg1}
+echo ${fields}
+echo ${country}
+echo ${_v}
+echo ${_V}
