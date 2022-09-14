@@ -1261,11 +1261,3 @@ alias kgsvcwslowiden='kubectl get service --watch --show-labels -o=wide --namesp
 alias kgingwslowiden='kubectl get ingress --watch --show-labels -o=wide --namespace'
 alias kgcmwslowiden='kubectl get configmap --watch --show-labels -o=wide --namespace'
 alias kgsecwslowiden='kubectl get secret --watch --show-labels -o=wide --namespace'
-
-function kctx() {
-  if [ -z $1 ]; then
-    kubectl config get-contexts
-  else
-    kubectl config use-context ${1}
-  fi
-}
