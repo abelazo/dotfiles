@@ -25,4 +25,6 @@ alias dv_prune='docker volume prune -f'
 # alias gl="dot git pretty-log"
 
 # Kubernetes
+alias kctx='kubectx'
+alias kns='kubens'
 source "${DOTFILES_PATH}/shell/kubernetes/kubectl_aliases"
