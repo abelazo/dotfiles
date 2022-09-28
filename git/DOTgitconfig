@@ -18,6 +18,7 @@
 
 [commit]
     gpgsign=true
+	template = /Users/abelazo/.gitmessage
 
 [core]
     editor=emacs -nw
