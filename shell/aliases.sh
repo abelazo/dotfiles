@@ -28,4 +28,3 @@ alias dv_prune='docker volume prune -f'
 alias kctx='kubectx'
 alias kns='kubens'
 alias kst='echo -n "Context:   "; kctx -c; echo -n "Namespace: "; kns -c | column -t'
-source "${DOTFILES_PATH}/shell/kubernetes/kubectl_aliases"
