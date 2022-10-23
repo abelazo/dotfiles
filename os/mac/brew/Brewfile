@@ -40,7 +40,7 @@ brew "kubernetes-cli"
 brew "maven"
 brew "node"
 brew "pstree"
-brew "versent/taps/saml2aws"
+brew "saml2aws"
 brew "watch"
 brew "wget"
 brew "ykman"           # Yubikey manager
@@ -48,16 +48,11 @@ brew "yubico-piv-tool" # Yubikey PIV module
 #
 # Cask
 #
-# cask "1password-cli" v2.0 is required
+cask "1password-cli"
+cask "1password"
+cask "bitwarden"
 cask "meld"
 cask "rectangle"
 cask "vlc"
-#
-#
-#mas "Amphetamine", id: 937984704
-#mas "Dato", id: 1470584107
-#mas "Disk Speed Test", id: 425264550
-#mas "GarageBand", id: 682658836
-#mas "iMovie", id: 408981434
-#mas "Keynote", id: 409183694
-#mas "Monosnap", id: 540348655
+cask "xbar"
+
