@@ -1,31 +1,55 @@
 # Installation Guide
 
-## On a new MacOS (migrating from another)
-* Update Mac 
-*  SSH keys (`~/.ssh`) from the previous computer to the new one
+## On a new MacOS
+* Register the laptop in the MDM if needed
+* Update MacOS
+* SSH configuration
+  - Copy SSH keys to (`~/.ssh`) from previous computer or from 1password
   - `chmod -R 700 ~/.ssh`
-* Migrate GPG keys (`~/.gnupg`) from the previous computer to the new one
+* GPG configuration
+  - Migrate GPG keys (`~/.gnupg`) from previous computer or from 1password
   - `chmod -R 700 ~/.gnupg`
-* Execute the dotfiles installer
-* Install **Spectacle**
-  - Gran permissions
-  - Start on login
-  - Run as a background application
-* Configure `Preferences/Keyboard/Shortcuts` for English & Spanish layouts.
-* Configure `Preferences/Keyboard/Shortcuts` Ctrl+Alt+Space for next keybard layout.
-
-* Open JetBrains Toolbox and login
-  - Login
-  - Enable "generate shell scripts in ~/bin"
-  - Install IntelliJ
-* Open IntelliJ
-  - Import from JetBrains account
-  - Sync plugins
-  - Execute `dot intellij add_code_templates`
-
-* Install emacs
-  - Link .emacs preferences
-
-* Download iTerm
-  - Install
-  - Select load preferences from URL and use ~/.dotfiles/mac/iTerm. On the next prompt select "NOT copy"
+* Install basic software:
+  - Firefox
+  - iterm
+  - 1password
+  - Bitwarden
+* Configure keyboard input sources
+  - Configure `Preferences/Keyboard/Shortcuts` for English & Spanish layouts.
+  - Configure `Preferences/Keyboard/Shortcuts` Ctrl+Alt+Space for next keybard layout.
+* Create worspace folders (`personal`, `tw`, `work`) and create:
+  - environment.folder
+  - gitconfig.folder
+    ```
+    [core]
+      sshCommand = ssh -i ~/.ssh/<SSH_KEY> -F /dev/null
+    [user]
+      name = <USERNAME>
+      email = <EMAIL>
+      signingkey = <GPG_SIGNING_KEY>
+    ```
+* Clone dotfiles in ` <PERSONAL_PATH>/dotfiles`
+* Configure iterm
+  - Select load preferences from URL and use `<PERSONAL_PATH>/dotfiles/os/mac/iTerm`.
+  - Create symbolic links to
+    - `.emacs`
+    - `.inputrc`
+    - `.gitconfig`
+    - `.bash_profile`
+* Configure Firefox
+  - 1password
+  - CleanURLs
+  - Cookie AutoDelete
+  - Decentralizedeyes
+  - Disconnect
+  - DuckDuckGo Privacy Essentials
+  - Easy Container Shortcuts
+  - Fireefox Multi-Account Containers
+  - Gitako
+  - Mailvelope
+  - Privacy Badger
+  - uBlock Origin
+* Install additional software:
+  - Google Drive
+  - Yubikey manager
+  - DisplayLink manager
