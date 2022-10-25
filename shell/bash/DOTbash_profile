@@ -13,8 +13,13 @@ PATH=$(
 )
 export PATH
 
+BREW_BIN="/usr/local/bin/brew"
+if [ "$(uname -p)" = "arm" ]; then
+  BREW_BIN="/opt/homebrew/bin/brew"
+fi
+
 # Set PATH, MANPATH, etc., for Homebrew.
-eval "$($(brew --prefix)/bin/brew shellenv)"
+eval "$(${BREW_BIN} shellenv)"
 
 # Bash prompt
 if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
