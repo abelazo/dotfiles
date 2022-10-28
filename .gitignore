@@ -10,3 +10,5 @@ shell/zsh/**/**.zwc.old
 # Private Stuff
 /**/**/private-*
 
+# Brewfile
+os/mac/brew/Brewfile.lock.json
