@@ -29,6 +29,7 @@
       signingkey = <GPG_SIGNING_KEY>
     ```
 * Clone dotfiles in ` <PERSONAL_PATH>/dotfiles`
+* Install software using `dot self brew`
 * Configure iterm
   - Select load preferences from URL and use `<PERSONAL_PATH>/dotfiles/os/mac/iTerm`.
   - Create symbolic links to
@@ -36,7 +37,7 @@
     - `.inputrc`
     - `.gitconfig`
     - `.bash_profile`
-* Configure Firefox
+* Configure Firefox with extensions:
   - 1password
   - CleanURLs
   - Cookie AutoDelete
