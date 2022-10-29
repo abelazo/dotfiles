@@ -49,7 +49,6 @@ brew "yubico-piv-tool" # Yubikey PIV module
 cask "1password-cli"
 cask "1password"
 cask "bitwarden"
-cask "emacs"
 cask "deezer"
 cask "gpg-suite"
 cask "meld"
