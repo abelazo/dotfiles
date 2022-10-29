@@ -1,6 +1,7 @@
 #
 # Taps
 tap "beeftornado/rmtree"
+tap "denisidoro/tools"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
