@@ -2373,7 +2373,7 @@
 			<key>Send Code When Idle</key>
 			<false/>
 			<key>Shortcut</key>
-			<string>1</string>
+			<string>2</string>
 			<key>Show Status Bar</key>
 			<true/>
 			<key>Silence Bell</key>
@@ -3544,7 +3544,7 @@
 			<key>Send Code When Idle</key>
 			<false/>
 			<key>Shortcut</key>
-			<string>2</string>
+			<string>1</string>
 			<key>Show Status Bar</key>
 			<true/>
 			<key>Silence Bell</key>
