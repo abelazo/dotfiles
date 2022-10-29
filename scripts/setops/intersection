@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? outputs insersect of set1 and set2
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   intersection <set1> <set2>
+docs::eval "$@"
+
+comm -12 <(sort ${set1}) <(sort ${set2})

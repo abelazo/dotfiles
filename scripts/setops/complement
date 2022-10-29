@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? outputs elements in set1 that are not in set2
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   complement <set1> <set2>
+docs::eval "$@"
+
+comm -23 <(sort ${set1}) <(sort ${set2})

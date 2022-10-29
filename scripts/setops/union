@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? outputs union of set1 and set2
+##? assumes they are disjoint
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   union <set1> <set2>
+docs::eval "$@"
+
+cat ${set1} ${set2}

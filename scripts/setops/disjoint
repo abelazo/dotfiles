@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? does not output anything if disjoint
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   disjoint <set1> <set2>
+docs::eval "$@"
+
+comm -12 <(sort ${set1}) <(sort ${set2})

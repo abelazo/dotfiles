@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? outputs elements that are in set1 or in set2 but not both
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   symdiff <set1> <set2>
+docs::eval "$@"
+
+sort ${set1} ${set2} | uniq -u

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? returns 0 if set1 is equal to set2
+##? returns 1 if set1 != set2
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   equality <set1> <set2>
+docs::eval "$@"
+
+diff -q <(sort ${set1}) <(sort ${set2})

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? outputs 1 if element is in set1
+##? outputs >1 if set is a multi-setA
+##? outputs 0 if elementis not in set1
+##?
+##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
+#??
+#?? 1.0.0
+##?
+##? Usage:
+##?   membership <element> <set1>
+docs::eval "$@"
+
+grep -xc ${element} ${set1}
