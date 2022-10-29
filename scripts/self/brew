@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Install all brew formulae
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   brew [<additional_brew_file>] [-f]
+##?
+##? Arguments:
+##?   additional_brew_file  Additional Brewfile to be installed
+##?
+##? Options:
+##?   -f  Forces cleanup brew installation to match given Brewfiles
+##?
+docs::eval "$@"
+
+core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
+log::note "Installing core Brefile: ${core_brewfile}"
+brew bundle --file=${core_brewfile}
+
+brewfile=$(realpath  ${additional_brew_file})
+log::note "Installing additional Brewfile: ${brewfile}"
+brew bundle --file=${brewfile}
+
+if [ "${_f}" == "true" ]; then
+  log::warning "Force brew bundle cleanup according to the given Brewfiles"  
+  union_brewfile=$(mktemp)
+  
+  cat ${core_brewfile} >> ${union_brewfile}
+  cat ${brewfile} >> ${union_brewfile}
+
+  brew bundle --force cleanup --file=${union_brewfile}
+  rm ${union_brewfile}
+fi
