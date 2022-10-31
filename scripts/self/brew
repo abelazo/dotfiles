@@ -4,36 +4,69 @@ set -euo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
-##? Install all brew formulae
+##? Brew software management
 ##?
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   brew [<additional_brew_file>] [-f]
+##?   brew install [<additional_brew_file>] [-f]
+##?   brew upgrade [-q]
+##?
+##? Commands:
+##?   install  Installs all brew formulae present in core and addtional files
+##?   upgrade  Updates brew and upgrades all outdated formulae
 ##?
 ##? Arguments:
 ##?   additional_brew_file  Additional Brewfile to be installed
 ##?
 ##? Options:
 ##?   -f  Forces cleanup brew installation to match given Brewfiles
+##?   -q  Quietly upgrades all outdated formulae
 ##?
 docs::eval "$@"
 
-core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
-log::note "Installing core Brefile: ${core_brewfile}"
-brew bundle --file=${core_brewfile}
+if [ "${install}" == "true" ]; then
+  log::header "Installing  homebrew formulae"
+  export HOMEBREW_NO_AUTO_UPDATE=0
+  core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
+  log::note "Installing core Brefile: ${core_brewfile}"
+  brew bundle --file=${core_brewfile}
 
-brewfile=$(realpath  ${additional_brew_file})
-log::note "Installing additional Brewfile: ${brewfile}"
-brew bundle --file=${brewfile}
-
-if [ "${_f}" == "true" ]; then
-  log::warning "Force brew bundle cleanup according to the given Brewfiles"  
-  union_brewfile=$(mktemp)
+  [[ -z ${additional_brew_file} ]] && exit # No additional installation required
   
-  cat ${core_brewfile} >> ${union_brewfile}
-  cat ${brewfile} >> ${union_brewfile}
+  brewfile=$(realpath  ${additional_brew_file})
+  log::note "Installing additional Brewfile: ${brewfile}"
+  brew bundle --file=${brewfile}
+  
+  if [ "${_f}" == "true" ]; then
+    log::warning "Force brew bundle cleanup according to the given Brewfiles"  
+    union_brewfile=$(mktemp)
+    
+    cat ${core_brewfile} >> ${union_brewfile}
+    cat ${brewfile} >> ${union_brewfile}
+  
+    brew bundle --force cleanup --file=${union_brewfile}
+    rm ${union_brewfile}
+  fi
+fi
 
-  brew bundle --force cleanup --file=${union_brewfile}
-  rm ${union_brewfile}
+if [ "${upgrade}" == "true" ]; then
+  log::header "Upgrading homebrew formulae"
+  brew update &> /dev/null
+  log::note "Obtaining outdated formulae"
+  brew outdated
+  if [ "${_q}" == "true" ]; then
+    upgrade_confirmation="y"
+  else
+    echo -n "Do you want to upgrade outdated formulae [y/N]: "
+    read input
+
+    input=$([[ -z ${input} ]] && echo "n" || echo ${input})
+    upgrade_confirmation=$(echo ${input} | tr '[:upper:]' '[:lower:]')
+  fi
+
+  if [ "${upgrade_confirmation}" == "y" ]; then
+    log::note "Upgrading outdated formulae"
+    brew upgrade
+  fi
 fi
