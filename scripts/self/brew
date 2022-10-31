@@ -54,7 +54,11 @@ if [ "${upgrade}" == "true" ]; then
   log::header "Upgrading homebrew formulae"
   brew update &> /dev/null
   log::note "Obtaining outdated formulae"
-  brew outdated
+  outdated=$(brew outdated --quiet)
+
+  [[ -z ${outdated} ]] && exit # No additional installation required
+
+  brew outdated --verbose
   if [ "${_q}" == "true" ]; then
     upgrade_confirmation="y"
   else
