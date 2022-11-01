@@ -1,3 +1,11 @@
+# Symbolic links setup
+pushd $HOME > /dev/null
+ln -s $HOME/ws/personal/dotfiles/shell/bash/DOTbash_profile .bash_profile
+ln -s $HOME/ws/personal/dotfiles/shell/bash/DOTinputrc .inputrc
+ln -s $HOME//ws/personal/dotfiles/git/DOTgitconfig .gitconfig
+ln -s $hOME/ws/personal/dotfiles/editors/emacs/DOTemacs .emacs
+popd > /dev/null
+
 # # Inspired by https://github.com/mathiasbynens/dotfiles/blob/master/.macos
 
 # # Close any open System Preferences panes, to prevent them from overriding

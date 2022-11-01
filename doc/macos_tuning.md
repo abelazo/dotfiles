@@ -29,7 +29,8 @@
       signingkey = <GPG_SIGNING_KEY>
     ```
 * Clone dotfiles in ` <PERSONAL_PATH>/dotfiles`
-* Install software using `dot self brew`
+* Setup MacOs by executing `<DOTFILES>/os/mac/mac-os_setup.sh`
+* Install core software `$ brew bundle --file=<DOTFILES>/os/mac/brew/Brefile`
 * Configure iterm
   - Select load preferences from URL and use `<PERSONAL_PATH>/dotfiles/os/mac/iTerm`.
   - Create symbolic links to
