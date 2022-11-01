@@ -10,7 +10,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   brew install [<additional_brew_file>] [-f]
-##?   brew upgrade [-q]
+##?   brew upgrade [-y]
 ##?
 ##? Commands:
 ##?   install  Installs all brew formulae present in core and addtional files
@@ -21,7 +21,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Options:
 ##?   -f  Forces cleanup brew installation to match given Brewfiles
-##?   -q  Quietly upgrades all outdated formulae
+##?   -y  Upgrades all outdated formulae avoiding asking for information 
 ##?
 docs::eval "$@"
 
