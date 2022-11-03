@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Provides networking information for a given CIDR
+#?? 1.0.0
+##?
+##? Usage:
+##?   ipcalc <cidr>
+docs::eval "$@"
+
+ipcalc -b ${cidr}
