@@ -11,4 +11,4 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   cidr <input_cidr>
 docs::eval "$@"
 
-ipcalc -b ${input_cidr}
+ipcalc ${input_cidr}
