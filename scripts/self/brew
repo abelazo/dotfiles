@@ -59,7 +59,7 @@ if [ "${upgrade}" == "true" ]; then
   [[ -z ${outdated} ]] && exit # No additional installation required
 
   brew outdated --verbose
-  if [ "${_q}" == "true" ]; then
+  if [ "${_y}" == "true" ]; then
     upgrade_confirmation="y"
   else
     echo -n "Do you want to upgrade outdated formulae [y/N]: "
