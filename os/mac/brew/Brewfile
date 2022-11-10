@@ -41,6 +41,7 @@ brew "node"
 brew "pstree"
 brew "saml2aws"
 brew "terraform"
+brew "tree"
 brew "watch"
 brew "wget"
 brew "ykman"           # Yubikey manager
