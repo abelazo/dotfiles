@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? ssh key tool
+##?
+##? Dependencies docpars:
+##?  $ brew install denisidoro/tools/docpars
+##?
+##? Usage:
+##?     ssh-keys create [--keyname=<keyname>]
+##?     ssh-keys public <private_keyname>
+##?
+##? Arguments:
+##?   crete             Description of create
+##?   public            Description of public
+##?   private_keyname   Description of private_keyname
+##?
+##? Options:
+##?   -k, --keyname=<keyname>  SSH key name [default: id_rsa]
+##?
+docs::eval "$@"
+
+if ${create}; then
+  ssh-keygen -t rsa -b 4096 -m pem -f ${keyname}
+elif ${public}; then
+  [[ -f ${private_keyname} ]] || echo "Error: ${private_keyname} does not exists"
+  ssh-keygen -f ${private_keyname} -y 
+fi
