@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Gets information of a terraform resource from terraform state file
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   resource <resource_address>
+##?
+##? Arguments:
+##?   resource_address   Type.Name
+##?
+docs::eval "$@"
+
+terraform show --json | jq -r '.values.root_module.resources[] | select(.address == "'${resource_address}'")'
