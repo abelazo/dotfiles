@@ -29,6 +29,10 @@
 ;; Start full screen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+;; Fill mode
+(setq-default fill-column 80)
+
+
 ;; Backups
 (setq backup-directory-alist `(("." . "~/.emacs.d/auto-save-list")))
 
