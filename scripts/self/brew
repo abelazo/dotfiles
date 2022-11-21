@@ -9,7 +9,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   brew install [<additional_brew_file>] [-f]
+##?   brew install [-f][<additional_brew_file>...]
 ##?   brew upgrade [-y]
 ##?
 ##? Commands:
@@ -17,7 +17,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   upgrade  Updates brew and upgrades all outdated formulae
 ##?
 ##? Arguments:
-##?   additional_brew_file  Additional Brewfile to be installed
+##?   additional_brew_file  Additional Brewfiles to be installed
 ##?
 ##? Options:
 ##?   -f  Forces cleanup brew installation to match given Brewfiles
@@ -26,25 +26,37 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 if [ "${install}" == "true" ]; then
+
   log::header "Installing  homebrew formulae"
   export HOMEBREW_NO_AUTO_UPDATE=0
   core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
   log::note "Installing core Brefile: ${core_brewfile}"
   brew bundle --file=${core_brewfile}
-
-  [[ -z ${additional_brew_file} ]] && exit # No additional installation required
   
-  brewfile=$(realpath  ${additional_brew_file})
-  log::note "Installing additional Brewfile: ${brewfile}"
-  brew bundle --file=${brewfile}
+  if [ ${#additional_brew_file[@]} -gt 0 ]; then
+    for candidate_file in "${additional_brew_file[@]}"; do
+      brewfile=$(realpath  ${candidate_file})
+      if [ -f ${brewfile} ]; then
+        log::note "Installing additional Brewfile: ${brewfile}"
+        brew bundle --file=${brewfile}
+      fi
+    done
+  fi
   
   if [ "${_f}" == "true" ]; then
     log::warning "Force brew bundle cleanup according to the given Brewfiles"  
     union_brewfile=$(mktemp)
     
     cat ${core_brewfile} >> ${union_brewfile}
-    cat ${brewfile} >> ${union_brewfile}
-  
+    if [ ${#additional_brew_file[@]} -gt 0 ]; then
+      for candidate_file in "${additional_brew_file[@]}"; do
+        brewfile=$(realpath  ${candidate_file})
+        if [ -f ${brewfile} ]; then
+          cat ${brewfile} >> ${union_brewfile}
+        fi
+      done
+    fi
+    log::note "Force cleanup of Brefile"
     brew bundle --force cleanup --file=${union_brewfile}
     rm ${union_brewfile}
   fi
