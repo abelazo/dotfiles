@@ -9,6 +9,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   documentation <environment> <arg1> [--fields=<fields>] [--country=<country>] [-vV]
+##?   documentation command [<file>...]
 ##?   documentation <another_command>
 ##?
 ##? Arguments:
@@ -26,10 +27,12 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 docs::eval "$@"
 
-echo ${another_command}
-echo ${environment}
-echo ${arg1}
-echo ${fields}
-echo ${country}
-echo ${_v}
-echo ${_V}
+echo "file: ${_}"
+echo "[file]: ${file[@]}"
+echo "another_command: ${another_command}"
+echo "environment: ${environment}"
+echo "arg1: ${arg1}"
+echo "fields: ${fields}"
+echo "country: ${country}"
+echo "v: ${_v}"
+echo "V: ${_V}"
