@@ -26,7 +26,6 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 export path=(
-  "$HOME/bin"
   "$DOTFILES_PATH/bin"
   "$HOME/ws/tw/adr-tools/src"
   "$JAVA_HOME/bin"

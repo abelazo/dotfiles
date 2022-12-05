@@ -38,7 +38,9 @@ for bash_file in ${DOTFILES_PATH}/shell/bash/completions/*; do
   source ${bash_file}
 done
 
-
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# HOME bin folder should have the highest priority
+export PATH="$HOME/bin":$PATH
