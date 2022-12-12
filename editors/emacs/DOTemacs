@@ -67,7 +67,6 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(package-selected-packages '(markdown-mode magit evil-numbers)))
 
-
 ;; ediff
 ;; Usage: emacs -diff file1 file2
 (defun command-line-diff (switch)
@@ -123,3 +122,12 @@ There are two things you can do about this warning:
     (while (re-search-forward "\\\\t" nil t)
         (replace-match "    " t nil))
 (goto-char 1))
+
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist
+             '("\\.\\(?:md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)\\'" . markdown-mode))
+
+(autoload 'gfm-mode "markdown-mode"
+   "Major mode for editing GitHub Flavored Markdown files" t)
+(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
