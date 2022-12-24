@@ -39,6 +39,7 @@ if [ "${install}" == "true" ]; then
       if [ -f ${brewfile} ]; then
         log::note "Installing additional Brewfile: ${brewfile}"
         brew bundle --file=${brewfile}
+        brew cleanup
       fi
     done
   fi
@@ -58,6 +59,7 @@ if [ "${install}" == "true" ]; then
     fi
     log::note "Force cleanup of Brefile"
     brew bundle --force cleanup --file=${union_brewfile}
+    brew cleanup
     rm ${union_brewfile}
   fi
 fi
@@ -84,5 +86,6 @@ if [ "${upgrade}" == "true" ]; then
   if [ "${upgrade_confirmation}" == "y" ]; then
     log::note "Upgrading outdated formulae"
     brew upgrade
+    brew cleanup
   fi
 fi
