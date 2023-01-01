@@ -13,42 +13,6 @@ self_update() {
   fi
 }
 
-update_submodules() {
-  cd "$ZIM_HOME" || exit
-
-  zsh "$ZIM_HOME/zimfw.zsh" upgrade
-  rm -rf "$ZIM_HOME/modules/"* && zsh "$ZIM_HOME/zimfw.zsh" install
-  zsh "$ZIM_HOME/zimfw.zsh" update
-
-  git submodule foreach "git discard"
-}
-
-apply_symlinks() {
-  local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
-  shift
-
-  echo
-  "$DOTFILES_PATH/$DOTBOT_DIR/$DOTBOT_BIN" -d "$DOTFILES_PATH" -c "$CONFIG" "$@"
-  echo
-}
-
-apply_common_symlinks() {
-  apply_symlinks "conf.yaml"
-}
-
-apply_macos_symlinks() {
-  apply_symlinks "conf.macos.yaml"
-
-  sudo ln -sf "$DOTFILES_PATH/mac/plist/limit.maxfiles.plist" "/Library/LaunchDaemons/limit.maxfiles.plist"
-  sudo ln -sf "$DOTFILES_PATH/mac/plist/limit.maxproc.plist" "/Library/LaunchDaemons/limit.maxproc.plist"
-  sudo chmod 644 "/Library/LaunchDaemons/limit.maxfiles.plist"
-  sudo chmod 644 "/Library/LaunchDaemons/limit.maxproc.plist"
-  sudo chown root:wheel /Library/LaunchDaemons/limit.maxfiles.plist
-  sudo chown root:wheel /Library/LaunchDaemons/limit.maxproc.plist
-  sudo launchctl load -w "/Library/LaunchDaemons/limit.maxfiles.plist"
-  sudo launchctl load -w "/Library/LaunchDaemons/limit.maxproc.plist"
-}
-
 project_status() {
   cd "$DOTFILES_PATH" || exit
 
