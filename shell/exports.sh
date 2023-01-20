@@ -27,6 +27,7 @@ export LC_ALL="en_US.UTF-8"
 
 export path=(
   "$DOTFILES_PATH/bin"
+  "$HOME/.krew/bin"
   "$HOME/ws/tw/adr-tools/src"
   "$JAVA_HOME/bin"
   "/usr/local/bin"  # This contains all Brew binaries (zsh...)
