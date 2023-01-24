@@ -38,6 +38,7 @@ brew "tree"
 brew "watch"
 brew "wget"
 brew "ykman"           # Yubikey manager
+brew "yq"
 brew "yubico-piv-tool" # Yubikey PIV module
 #
 # Cask
