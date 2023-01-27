@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Launches a container with a local Swagger Editor
+#?? 1.0.0
+##?
+##? Usage:
+##?   localSwaggerEditor [<port>]
+docs::eval "$@"
+
+local_port=${port:-8080}
+
+docker run -d -p ${local_port}:80 swaggerapi/swagger-editor:next-v5
+
+open http://localhost:${local_port}
