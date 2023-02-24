@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Returns the status code of an http call
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   httpcode <url> [-f]
+##?
+##? Options:
+##?   -f, --full  Return the full HTTP code
+##?
+docs::eval "$@"
+
+if [ "${full}" == "true" ]; then
+  http -h ${url} 2>&1 2>&1 | grep HTTP/1.1
+else
+  http -h ${url} 2>&1 2>&1 | grep HTTP/1.1 | cut -d ' ' -f 2
+fi
