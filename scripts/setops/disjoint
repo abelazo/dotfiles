@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
-##? does not output anything if disjoint
+##? Outputs the common elements or does not output anything if sets are disjoint
 ##?
 ##? Source: https://catonmat.net/set-operations-in-unix-shell-simplified
 #??
