@@ -11,29 +11,23 @@ tap "versent/taps"
 #
 # brew formulae
 #
-brew "awscli"
 brew "bash"
 brew "bash-completion"
 brew "bash-git-prompt"
 brew "bat"
 brew "coreutils"
-brew "ctop"
 brew "denisidoro/tools/docpars"
 brew "dos2unix"
 brew "emacs"
 brew "fzf"
 brew "git"
 brew "git-delta"
-brew "git-gui"
 brew "gnu-sed"
 brew "hstr"
 brew "htop"
 brew "httpie"
-brew "ipcalc"
 brew "ispell"
 brew "jq"
-brew "jwt-cli"
-brew "node"
 brew "pstree"
 brew "tree"
 brew "watch"
@@ -44,8 +38,6 @@ brew "yubico-piv-tool" # Yubikey PIV module
 #
 # Cask
 #
-cask "1password-cli"
-cask "1password"
 cask "bitwarden"
 cask "deezer"
 cask "gpg-suite"
