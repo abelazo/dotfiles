@@ -1,13 +1,9 @@
 #
 # Taps
 tap "beeftornado/rmtree"
-tap "denisidoro/tools"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
-tap "mike-engel/jwt-cli"
-tap "pivotal/tap"
-tap "versent/taps"
 #
 # brew formulae
 #
