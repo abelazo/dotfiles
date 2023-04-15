@@ -28,5 +28,5 @@ elif ${public}; then
     echo "Error: ${keyname} does not exists"
     exit 1
   fi
-  ssh-keygen -f ${keyname} -y 
+  ssh-keygen -f ${keyname} -y
 fi

@@ -21,7 +21,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Options:
 ##?   -f  Forces cleanup brew installation to match given Brewfiles
-##?   -y  Upgrades all outdated formulae avoiding asking for information 
+##?   -y  Upgrades all outdated formulae avoiding asking for information
 ##?
 docs::eval "$@"
 
@@ -32,7 +32,7 @@ if [ "${install}" == "true" ]; then
   core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
   log::note "Installing core Brewfile: ${core_brewfile}"
   brew bundle --file=${core_brewfile}
-  
+
   if [ ${#additional_brew_file[@]} -gt 0 ]; then
     for candidate_file in "${additional_brew_file[@]}"; do
       brewfile=$(realpath  ${candidate_file})
@@ -43,11 +43,11 @@ if [ "${install}" == "true" ]; then
       fi
     done
   fi
-  
+
   if [ "${_f}" == "true" ]; then
-    log::warning "Force brew bundle cleanup according to the given Brewfiles"  
+    log::warning "Force brew bundle cleanup according to the given Brewfiles"
     union_brewfile=$(mktemp)
-    
+
     cat ${core_brewfile} >> ${union_brewfile}
     if [ ${#additional_brew_file[@]} -gt 0 ]; then
       for candidate_file in "${additional_brew_file[@]}"; do

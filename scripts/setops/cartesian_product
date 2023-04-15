@@ -15,4 +15,3 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 while read a; do while read b; do echo "$a, $b"; done < ${set1}; done < ${set2}
-

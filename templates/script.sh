@@ -72,4 +72,3 @@ if [ -z ${REPOSITORY} ]; then
     echo
     exit 2
 fi
-

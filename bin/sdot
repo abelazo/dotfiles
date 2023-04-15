@@ -12,4 +12,3 @@ export DOTFILES_PATH=$(dirname $(dirname $(realpath $0)))
 ##?    sdot <context> <cmd> [<args>...]
 
 "$DOTFILES_PATH/bin/dot" "$@"
-

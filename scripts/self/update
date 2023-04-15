@@ -14,4 +14,3 @@ docs::eval "$@"
 
 log::note "Updating dotfiles"
 self_update
-

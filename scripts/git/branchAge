@@ -6,7 +6,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##? Show branches age (author date) in current git repo
 ##? Use -r for remote branches
-##? 
+##?
 #?? 1.0.0
 ##?
 ##? Usage:
