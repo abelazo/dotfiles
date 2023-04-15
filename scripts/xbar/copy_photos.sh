@@ -9,27 +9,36 @@
 # Hack for language not being set properly and unicode support
 export LANG="${LANG:-en_US.UTF-8}"
 
+function copy {
+  target_folder=${1}
+  mv /Volumes/NIKON\ D300S/DCIM/301D300S ${target_folder}
+  chmod 755 ${target_folder}
+  chmod 644 ${target_folder}/*
+}
+
+function eject {
+  diskutil eject ${1}
+}
+
 if [[ "$1" = "cf" ]]; then
   target_folder=$HOME/Desktop/301D300S_CF
-
   if [ -d /Volumes/NIKON\ D300S/DCIM/301D300S ]; then
-    mv /Volumes/NIKON\ D300S/DCIM/301D300S ${target_folder}
-    chmod 755 ${target_folder}
-    chmod 644 ${target_folder}/*
-    diskutil eject /Volumes/NIKON\ D300S
-    osascript -e 'display notification "Memory card photos copied to '${target_folder}'" with title "Copy photos"'
+    copy ${target_folder}
+    eject "/Volumes/NIKON\ D300S"
+    osascript -e 'display notification "Memory card photos copied to '${target_folder}'" with title "Copy photos" subtitle "CF card"'
+  else
+    osascript -e 'display notification "CF memory card not mounted.\nNothing to copy" with title "Copy photos" subtitle "CF card"'
   fi
 fi
 
 if [[ "$1" = "sd" ]]; then
   target_folder=$HOME/Desktop/301D300S_SD
-
   if [ -d /Volumes/NIKON\ D300S/DCIM/301D300S ]; then
-    mv /Volumes/NIKON\ D300S/DCIM/301D300S ${target_folder}
-    chmod 755 ${target_folder}
-    chmod 644 ${target_folder}/*
-    diskutil eject /Volumes/NIKON\ D300S
-    osascript -e 'display notification "Memory card photos copied to '${target_folder}'" with title "Copy photos"'
+    copy ${target_folder}
+    eject "/Volumes/NIKON\ D300S"
+    osascript -e 'display notification "Memory card photos copied to '${target_folder}'" with title "Copy photos" subtitle "SD card"'
+  else
+    osascript -e 'display notification "SD memory card not mounted.\nNothing to copy" with title "Copy photos" subtitle "SD card"'
   fi
 fi
 
