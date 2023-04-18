@@ -22,7 +22,7 @@ elif [ "${gpg}" = "true" ]; then
   [[ -z ${gpgKeyId} ]] && log::error "Could not find a GPG key identified by ${item}" && exit 1
   [[ $(echo ${gpgKeyId} | wc -c) -gt 27 ]] && log::error "Could not find a UNIQUE GPG key identified by ${item}" && exit 2
 
-  result=$(op item get --fields label=Password ${gpgKeyId})
+  result=$(op item get ${gpgKeyId} --fields label=password --format human-readable)
 else
   result=$(op item get ${item} --fields label=password --format human-readable)
 fi
@@ -30,5 +30,5 @@ fi
 if [ "${stdout}" = "true" ]; then
   echo ${result}
 else
-  echo ${result} | pbcopy
+  echo -n ${result} | pbcopy
 fi
