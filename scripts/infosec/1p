@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Get password from 1password
+#?? 2.0.0
+##?
+##? Usage:
+##?   1p pwd <item> [--stdout]
+##?   1p otp <item> [--stdout]
+##?   1p gpg <item> [--stdout]
+##?
+docs::eval "$@"
+
+if [ "${otp}" = "true" ]; then
+  result=$(op item get ${item} --field type=otp --format json | jq -r .totp)
+elif [ "${gpg}" = "true" ]; then
+  gpgKeyId=$(op item list --tags GPG --format=json | jq -r '.[] | select(.title | test("'${item}'")).id')
+
+  [[ -z ${gpgKeyId} ]] && log::error "Could not find a GPG key identified by ${item}" && exit 1
+  [[ $(echo ${gpgKeyId} | wc -c) -gt 27 ]] && log::error "Could not find a UNIQUE GPG key identified by ${item}" && exit 2
+
+  result=$(op item get --fields label=Password ${gpgKeyId})
+else
+  result=$(op item get ${item} --fields label=password --format human-readable)
+fi
+
+if [ "${stdout}" = "true" ]; then
+  echo ${result}
+else
+  echo ${result} | pbcopy
+fi
