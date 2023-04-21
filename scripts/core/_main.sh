@@ -10,6 +10,7 @@ if ! ${DOT_MAIN_SOURCED:-false}; then
   source "$DOTFILES_PATH/scripts/core/platform.sh"
   source "$DOTFILES_PATH/scripts/core/str.sh"
   source "$DOTFILES_PATH/scripts/core/table.sh"
+  source "$DOTFILES_PATH/scripts/core/types.sh"
 
   readonly DOT_MAIN_SOURCED=true
 fi
