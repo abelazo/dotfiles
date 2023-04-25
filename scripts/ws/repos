@@ -19,7 +19,7 @@ docs::eval "$@"
 
 [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
 
-for gitdir in `find ${work_dir} -name .terragrunt-cache -prune -o -name .git -print`; do
+for gitdir in `find ${work_dir} -type d \( -path "*/.terraform" -o -path "*/.terragrunt-cache" \) -prune -o -name .git -print`; do
   pushd $(dirname $gitdir) >& /dev/null
   if [ "${pull}" == "true" ]; then
     log::note "Updating $(dirname $gitdir)"
