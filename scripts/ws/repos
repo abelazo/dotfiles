@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Interact with workspace GIT repositories
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   repos pull
+##?   repos pre-commit
+##?
+##? Arguments:
+##?   pull        Pull all git repos
+##?   pre-commit  Runs pre-commit install in all git repos
+##?
+docs::eval "$@"
+
+[[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
+
+for gitdir in `find ${work_dir} -name .terragrunt-cache -prune -o -name .git -print`; do
+  pushd $(dirname $gitdir) >& /dev/null
+  if [ "${pull}" == "true" ]; then
+    log::note "Updating $(dirname $gitdir)"
+    git pull
+  elif [ "${pre_commit}" == "true" ]; then
+    log::note "Installing pre-commit in $(dirname $gitdir)"
+    pre-commit install
+  fi
+  popd >& /dev/null
+done
