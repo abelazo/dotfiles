@@ -2695,7 +2695,7 @@
 			<key>Window Type</key>
 			<integer>12</integer>
 			<key>Working Directory</key>
-			<string>/Users/abelazo/ws/tesco</string>
+			<string></string>
 		</dict>
 		<dict>
 			<key>ASCII Anti Aliased</key>
@@ -3868,7 +3868,7 @@
 			<key>Window Type</key>
 			<integer>12</integer>
 			<key>Working Directory</key>
-			<string>/Users/abelazo/ws/tesco</string>
+			<string></string>
 		</dict>
 	</array>
 	<key>OnlyWhenMoreTabs</key>
