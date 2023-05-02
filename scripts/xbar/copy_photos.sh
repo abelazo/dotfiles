@@ -24,7 +24,7 @@ if [[ "$1" = "cf" ]]; then
   target_folder=$HOME/Desktop/301D300S_CF
   if [ -d /Volumes/NIKON\ D300S/DCIM/301D300S ]; then
     copy ${target_folder}
-    eject "/Volumes/NIKON\ D300S"
+    diskutil eject "/Volumes/NIKON D300S"/
     osascript -e 'display notification "Memory card photos copied to '${target_folder}'" with title "Copy photos" subtitle "CF card"'
   else
     osascript -e 'display notification "CF memory card not mounted.\nNothing to copy" with title "Copy photos" subtitle "CF card"'
@@ -35,7 +35,7 @@ if [[ "$1" = "sd" ]]; then
   target_folder=$HOME/Desktop/301D300S_SD
   if [ -d /Volumes/NIKON\ D300S/DCIM/301D300S ]; then
     copy ${target_folder}
-    eject "/Volumes/NIKON\ D300S"
+    diskutil eject "/Volumes/NIKON D300S"/
     osascript -e 'display notification "Memory card photos copied to '${target_folder}'" with title "Copy photos" subtitle "SD card"'
   else
     osascript -e 'display notification "SD memory card not mounted.\nNothing to copy" with title "Copy photos" subtitle "SD card"'
