@@ -10,7 +10,8 @@ repos:
         exclude: docs/CHANGELOG.md
       - id: mixed-line-ending
 
-  - repo: https://github.com/qoomon/git-conventional-commits
-    rev: v2.6.3
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.42.0
     hooks:
-      - id: conventional-commits
+      - id: commitizen
+        stages: [commit-msg]
