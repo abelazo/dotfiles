@@ -25,11 +25,13 @@ for gitdir in `find ${work_dir} -type d \( -path "*/.terraform" -o -path "*/.ter
     log::note "Updating $(basename $(dirname $gitdir))"
     git pull
   elif [ "${pre_commit}" == "true" ]; then
-    log::note "Installing pre-commit in $(dirname $gitdir)"
-    pre-commit install
-    for hook_type in $(echo "commit-msg post-checkout post-commit post-merge post-rewrite pre-commit pre-merge-commit pre-push pre-rebase prepare-commit-msg"); do
-      pre-commit install -t ${hook_type} > /dev/null
-    done
+    if [ -f .pre-commit-config.yaml ]; then
+      log::note "Installing pre-commit in $(dirname $gitdir)"
+      pre-commit install
+      for hook_type in $(echo "commit-msg post-checkout post-commit post-merge post-rewrite pre-commit pre-merge-commit pre-push pre-rebase prepare-commit-msg"); do
+        pre-commit install -t ${hook_type} > /dev/null
+      done
+    fi
   fi
   popd >& /dev/null
 done
