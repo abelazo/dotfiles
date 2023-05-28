@@ -9,11 +9,14 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   repos pull
-##?   repos pre-commit
+##?   repos pre-commit [--uninstall]
 ##?
 ##? Arguments:
 ##?   pull        Pull all git repos
 ##?   pre-commit  Runs pre-commit install in all git repos
+##?
+##? Options:
+##?   -u, --uninstall  Uninstall hooks
 ##?
 docs::eval "$@"
 
@@ -25,11 +28,18 @@ for gitdir in `find ${work_dir} -type d \( -path "*/.terraform" -o -path "*/.ter
     log::note "Updating $(basename $(dirname $gitdir))"
     git pull
   elif [ "${pre_commit}" == "true" ]; then
+    subcommand="install"
+    msg="Installing pre-commit in $(dirname $gitdir)"
+    if [ "${uninstall}" == "true" ]; then
+      subcommand="uninstall"
+      msg="Uninstalling pre-commit in $(dirname $gitdir)"
+    fi
+
     if [ -f .pre-commit-config.yaml ]; then
-      log::note "Installing pre-commit in $(dirname $gitdir)"
-      pre-commit install
+      log::note ${msg}
+      pre-commit ${subcommand}
       for hook_type in $(echo "commit-msg post-checkout post-commit post-merge post-rewrite pre-commit pre-merge-commit pre-push pre-rebase prepare-commit-msg"); do
-        pre-commit install -t ${hook_type} > /dev/null
+        pre-commit ${subcommand} -t ${hook_type} > /dev/null
       done
     fi
   fi
