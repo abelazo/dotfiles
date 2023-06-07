@@ -10,7 +10,16 @@ function ediff() {
 export -f ediff
 
 function ttd() {
-  gdate -d @$(( ($1 + 500) / 1000 ))
+  if [ "${1}" == "-h" ]; then
+    echo "ttd <timestamp> [secs]"
+    return
+  fi
+
+  divisor=1000
+  if [ "$2" == "secs" ]; then
+    divisor=1
+  fi
+  gdate -d @$(( ($1 + 500) / ${divisor} ))
 }
 
 function portainer() {
