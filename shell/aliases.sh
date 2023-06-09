@@ -3,8 +3,9 @@ alias ls='ls -G'
 alias tmp='cd $HOME/tmp'
 
 # Docker
-alias dc_stopall='docker stop $(docker container ls -a -q)'
-alias dc_rmall='docker rm $(docker container ls -a -q)'
+alias dc_stopall='docker container stop $(docker container ls -a -q)'
+alias dc_rmall='docker container rm $(docker container ls -a -q)'
+alias di_rmall='docker image rm $(docker image ls -a -q)'
 alias ds_prune='docker system prune -a -f'
 alias dv_prune='docker volume prune -f'
 
