@@ -9,7 +9,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   repos pull [--folder=<folder>]
-##?   repos pre-commit [--uninstall]
+##?   repos pre-commit [--uninstall][--folder=<folder>]
 ##?
 ##? Arguments:
 ##?   pull        Pull all git repos
