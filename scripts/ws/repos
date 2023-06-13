@@ -8,7 +8,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   repos pull
+##?   repos pull [--folder=<folder>]
 ##?   repos pre-commit [--uninstall]
 ##?
 ##? Arguments:
@@ -16,11 +16,19 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   pre-commit  Runs pre-commit install in all git repos
 ##?
 ##? Options:
-##?   -u, --uninstall  Uninstall hooks
+##?   -f, --folder=<folder>  Base folder to execute the action
+##?   -u, --uninstall        Uninstall hooks
 ##?
 docs::eval "$@"
 
-[[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
+if [ "${folder}" != "" ]; then
+  work_dir=$(realpath ${folder})
+else
+  [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
+fi
+
+[[ "${pull}" == true ]] && action="Pulling repositories" || action="Installing pre-commit"
+log::header "${action} in ${work_dir}"
 
 for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.terragrunt-cache" \) -o -path "*/.cache" \) -prune -o -name .git -print`; do
   pushd $(dirname $gitdir) >& /dev/null
@@ -33,10 +41,10 @@ for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.
     default_hooks=(commit-msg pre-commit pre-merge-commit)
 
     subcommand="install"
-    msg="Installing pre-commit hooks (${default_hooks[@]}) in $(dirname $gitdir)"
+    msg="Installing pre-commit hooks (${default_hooks[@]}) in $(basename $(dirname $gitdir))"
     if [ "${uninstall}" == "true" ]; then
       subcommand="uninstall"
-      msg="Uninstalling pre-commit hooks (${default_hooks[@]}) in $(dirname $gitdir)"
+      msg="Uninstalling pre-commit hooks (${default_hooks[@]}) in $(basename $(dirname $gitdir))"
     fi
 
     if [ -f .pre-commit-config.yaml ]; then
