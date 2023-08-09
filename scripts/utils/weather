@@ -16,7 +16,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 if [ "$detail" == "true" ]; then
-  curl -4 http://wttr.in/${1}?format=v2
+  curl -4 http://wttr.in/${city}?format=v2
 else
-  curl -4 http://wttr.in/${1}
+  curl -4 http://wttr.in/${city}
 fi
