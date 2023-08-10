@@ -31,6 +31,7 @@ brew "pstree"
 brew "tree"
 brew "watch"
 brew "wget"
+brew "yank"
 brew "ykman"           # Yubikey manager
 brew "yq"
 brew "yubico-piv-tool" # Yubikey PIV module
