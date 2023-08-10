@@ -30,7 +30,7 @@ if [ "${install}" == "true" ]; then
   log::header "Installing  homebrew formulae"
   export HOMEBREW_NO_AUTO_UPDATE=0
   core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
-  log::note "Installing core Brewfile: ${core_brewfile}"
+  log::note "Installing CORE Brewfile: ${core_brewfile}"
   brew bundle --file=${core_brewfile}
 
   if [ ${#additional_brew_file[@]} -gt 0 ]; then
@@ -46,9 +46,10 @@ if [ "${install}" == "true" ]; then
   fi
 
   if [ "${_f}" == "true" ]; then
-    log::warning "Force brew bundle cleanup according to the given Brewfiles"
+    log::header "Brew bundle cleanup"
     union_brewfile=$(mktemp)
 
+    log::note "Merging input Brewfiles"
     cat ${core_brewfile} >> ${union_brewfile}
     if [ ${#additional_brew_file[@]} -gt 0 ]; then
       for candidate_file in "${additional_brew_file[@]}"; do
@@ -58,7 +59,7 @@ if [ "${install}" == "true" ]; then
         fi
       done
     fi
-    log::note "Force cleanup of Brewfile"
+    log::note "Force cleanup"
     brew bundle --force cleanup --file=${union_brewfile}
     log::note "Cleaning up"
     brew cleanup
