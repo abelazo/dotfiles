@@ -50,10 +50,12 @@ if [ "${install}" == "true" ]; then
     union_brewfile=$(mktemp)
 
     log::note "Merging input Brewfiles"
+    echo "Brewfile ${core_brewfile}"
     cat ${core_brewfile} >> ${union_brewfile}
     if [ ${#additional_brew_file[@]} -gt 0 ]; then
       for candidate_file in "${additional_brew_file[@]}"; do
         brewfile=$(realpath  ${candidate_file})
+        echo "Brewfile ${brewfile}"
         if [ -f ${brewfile} ]; then
           cat ${brewfile} >> ${union_brewfile}
         fi
