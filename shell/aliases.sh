@@ -1,6 +1,6 @@
 alias emacs='emacs -nw'
 alias ls='ls -G'
-alias tmp='cd $HOME/tmp'
+alias tmp='pushd $HOME/tmp'
 
 # Docker
 alias dc_stopall='docker container stop $(docker container ls -a -q)'
