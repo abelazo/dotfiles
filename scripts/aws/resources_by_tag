@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS resources by tag
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   resources_by_tag --key=<key> --values=<values>
+##?
+##? Options:
+##?   -k, --key=<key>        Key to be used as filter
+##?   -v, --values=<values>  Comma-separated list of values to filter
+##?
+docs::eval "$@"
+
+aws resourcegroupstaggingapi get-resources --region eu-west-1 --tag-filters Key=${key},Values=${values}
