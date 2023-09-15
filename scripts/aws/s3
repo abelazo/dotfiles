@@ -16,4 +16,12 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 log::note "Empting bucket ${bucket}"
-aws s3api delete-objects --bucket ${bucket} --delete "$(aws s3api list-object-versions --bucket ${bucket} | jq '{Objects: [.Versions[] | {Key:.Key, VersionId : .VersionId}], Quiet: false}')"
+versions=$(aws s3api list-object-versions --bucket ${bucket})
+
+num_versions=$(jq '.Versions | length' <<<${versions})
+if [ ${num_versions}  -gt 0 ]; then
+  objects=$(jq '{Objects: [.Versions[] | {Key:.Key, VersionId : .VersionId}], Quiet: false}' <<<${versions})
+  aws s3api delete-objects --bucket ${bucket} --delete "${objects}"
+else
+  log::warning "Bucket ${bucket} is already empty"
+fi
