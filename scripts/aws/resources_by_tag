@@ -16,4 +16,8 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 docs::eval "$@"
 
-aws resourcegroupstaggingapi get-resources --region eu-west-1 --tag-filters Key=${key},Values=${values}
+if [ -z AWS_DEFAULT_REGION ]; then
+  AWS_DEFAULT_REGION="eu-west-1"
+fi
+
+aws resourcegroupstaggingapi get-resources --region ${AWS_DEFAULT_REGION} --tag-filters Key=${key},Values=${values}
