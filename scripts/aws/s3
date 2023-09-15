@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS S3
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   s3 empty --bucket=<bucket>
+##?
+##? Options:
+##?   -b, --bucket=<bucket>    S3 bucket
+##?
+docs::eval "$@"
+
+log::note "Empting bucket ${bucket}"
+aws s3api delete-objects --bucket ${bucket} --delete "$(aws s3api list-object-versions --bucket ${bucket} | jq '{Objects: [.Versions[] | {Key:.Key, VersionId : .VersionId}], Quiet: false}')"
