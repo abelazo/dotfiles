@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS logs
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   logs --log_group=<log_group> [--log_stream=<log_stream>]
+##?
+##? Options:
+##?   -g, --log_group=<log_group>    CloudWatch log group
+##?   -s, --log_stream=<log_stream>  CloudWatch los stream
+##?
+docs::eval "$@"
+
+if [ "${log_stream}" == "" ]; then
+  stream_name=$(aws logs describe-log-streams --log-group-name ${log_group} | jq -r .logStreams[0].logStreamName)
+else
+  stream_name=${log_stream}
+fi
+
+log::note "Getting logs for ${log_group} - ${stream_name}"
+aws logs get-log-events --log-group-name ${log_group} --log-stream-name ${stream_name} | jq -r '.events[].message | gsub("\n"; "")'
