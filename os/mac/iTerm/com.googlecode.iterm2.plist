@@ -643,7 +643,7 @@
 			<key>Columns</key>
 			<integer>250</integer>
 			<key>Command</key>
-			<string></string>
+			<string>/opt/homebrew/bin/bash</string>
 			<key>Cursor Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -684,7 +684,7 @@
 				<real>0.99999600648880005</real>
 			</dict>
 			<key>Custom Command</key>
-			<string>No</string>
+			<string>Custom Shell</string>
 			<key>Custom Directory</key>
 			<string>No</string>
 			<key>Custom Icon Path</key>
@@ -1812,7 +1812,7 @@
 			<key>Columns</key>
 			<integer>250</integer>
 			<key>Command</key>
-			<string></string>
+			<string>/opt/homebrew/bin/bash</string>
 			<key>Cursor Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -1853,7 +1853,7 @@
 				<real>0.99999600648880005</real>
 			</dict>
 			<key>Custom Command</key>
-			<string>No</string>
+			<string>Custom Shell</string>
 			<key>Custom Directory</key>
 			<string>Advanced</string>
 			<key>Custom Icon Path</key>
@@ -2986,7 +2986,7 @@
 			<key>Columns</key>
 			<integer>250</integer>
 			<key>Command</key>
-			<string></string>
+			<string>/opt/homebrew/bin/bash</string>
 			<key>Cursor Color</key>
 			<dict>
 				<key>Alpha Component</key>
@@ -3027,7 +3027,7 @@
 				<real>0.99999600648880005</real>
 			</dict>
 			<key>Custom Command</key>
-			<string>No</string>
+			<string>Custom Shell</string>
 			<key>Custom Directory</key>
 			<string>Advanced</string>
 			<key>Custom Icon Path</key>
