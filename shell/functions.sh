@@ -28,14 +28,10 @@ function portainer() {
 }
 
 function cd() {
+  set -x
   builtin cd "$@"
 
-  if [[ -z "$VIRTUAL_ENV" ]] ; then
-    ## If env folder is found then activate the vitualenv
-      if [[ -d ./.venv ]] ; then
-        source ./.venv/bin/activate
-      fi
-  else
+  if [[ -v VIRTUAL_ENV ]]; then
     ## check the current folder belong to earlier VIRTUAL_ENV folder
     # if yes then do nothing
     # else deactivate
@@ -44,4 +40,12 @@ function cd() {
         deactivate
       fi
   fi
+
+  if [[ -z "$VIRTUAL_ENV" ]] ; then
+    ## If env folder is found then activate the vitualenv
+    if [[ -d ./.venv ]] ; then
+      source ./.venv/bin/activate
+    fi
+  fi
+  set +x
 }
