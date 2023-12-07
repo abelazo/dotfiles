@@ -28,7 +28,6 @@ function portainer() {
 }
 
 function cd() {
-  set -x
   builtin cd "$@"
 
   if [[ -v VIRTUAL_ENV ]]; then
@@ -47,5 +46,4 @@ function cd() {
       source ./.venv/bin/activate
     fi
   fi
-  set +x
 }
