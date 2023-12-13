@@ -8,11 +8,22 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 2.0.0
 ##?
 ##? Usage:
+##?   1p list [<vault>]
+##?
 ##?   1p pwd <item> [--stdout]
 ##?   1p otp <item> [--stdout]
 ##?   1p gpg <item> [--stdout]
 ##?
 docs::eval "$@"
+
+if [ "${list}" == "true" ]; then
+  if [[ -n "$vault" ]]; then
+    op item list --format=json | jq -r '["Item","Vault"], ["----", "-----"], (.[] | select(.vault.name == "'${vault}'") | [.title, .vault.name]) | @tsv' | column -ts $'\t'
+  else
+    op item list --format=json | jq -r '["Item","Vault"], ["----", "-----"], (.[] | [.title, .vault.name]) | @tsv' | column -ts $'\t'
+  fi
+  exit 0
+fi
 
 if [ "${otp}" = "true" ]; then
   result=$(op item get ${item} --field type=otp --format json | jq -r .totp)
