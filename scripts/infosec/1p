@@ -9,7 +9,6 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   1p list [<vault>]
-##?
 ##?   1p pwd <item> [--stdout]
 ##?   1p otp <item> [--stdout]
 ##?   1p gpg <item> [--stdout]
