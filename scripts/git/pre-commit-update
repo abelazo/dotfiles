@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Updates the version of the pre-commit hooks in all repositories found
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   pre-commit-update [--folder=<folder>]
+##?
+##? Options:
+##?   -f, --folder=<folder>  Base folder to execute the action
+##?
+docs::eval "$@"
+
+if [ "${folder}" != "" ]; then
+  work_dir=$(realpath ${folder})
+else
+  [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
+fi
+
+pre_commit_config_file_name=".pre-commit-config.yaml"
+
+for pre_commit_config_path in $(find ${work_dir} -name ${pre_commit_config_file_name}); do
+  gitdir=$(dirname ${pre_commit_config_path})
+  log::header "Updating ${gitdir}"
+  pushd ${gitdir} >& /dev/null
+  pre-commit autoupdate
+  if [[ $(git diff -s --exit-code -- ${pre_commit_config_file_name}) -ne 0 ]]; then
+    log::warning "Changes detected. Commiting & pushing."
+    git add ${pre_commit_config_file_name}
+    git commit -m "chore(pre-commit): Autoupdate versions" && git push origin HEAD
+  else
+    log::note "No update required"
+  fi
+  popd >& /dev/null
+done
