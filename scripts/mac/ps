@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? TBC
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   ps [--pid=<pid>|--name=<name>]
+##?
+##? Options:
+##?   -n, --name=<name>  Name of the process to be listed
+##?   -p, --pid=<pid>    PID of the process to be listed
+##?
+docs::eval "$@"
+
+options=""
+if [[ -n ${pid} ]]; then
+  options="-p ${pid}"
+fi
+
+if [[ -n ${name} ]]; then
+  result=$(pgrep ${name})
+  if [[ ${?} -eq 0 ]]; then
+    for pid in ${result}; do
+      options="-p ${pid} ${options}"
+    done
+  fi
+fi
+
+ps ${options} -o pid,uid,gid,%cpu,%mem,user,start,etime,command
