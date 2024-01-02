@@ -28,7 +28,8 @@ for pre_commit_config_path in $(find ${work_dir} -name ${pre_commit_config_file_
   log::header "Updating ${gitdir}"
   pushd ${gitdir} >& /dev/null
   pre-commit autoupdate
-  if [[ $(git diff -s --exit-code -- ${pre_commit_config_file_name}) -ne 0 ]]; then
+  git diff -s --exit-code -- ${pre_commit_config_file_name}
+  if [[ ${?} -ne 0 ]]; then
     log::warning "Changes detected. Commiting & pushing."
     git add ${pre_commit_config_file_name}
     git commit -m "chore(pre-commit): Autoupdate versions" && git push origin HEAD
