@@ -31,8 +31,7 @@ for pre_commit_config_path in $(find ${work_dir} -name ${pre_commit_config_file_
   git diff -s --exit-code -- ${pre_commit_config_file_name}
   if [[ ${?} -ne 0 ]]; then
     log::warning "Changes detected. Commiting & pushing."
-    git add ${pre_commit_config_file_name}
-    git commit -m "chore(pre-commit): Autoupdate versions" && git push origin HEAD
+    git add ${pre_commit_config_file_name} && git commit -m "chore(pre-commit): Autoupdate versions" && git pull && git push origin HEAD
   else
     log::note "No update required"
   fi
