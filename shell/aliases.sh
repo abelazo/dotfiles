@@ -16,11 +16,11 @@ alias tmp='pushd $HOME/tmp'
 
 # Safety nets
 # do not delete / or prompt if deleting more than 3 files at a time
-alias rm='rm -I'
+# alias rm='rm -I'
 # confirmations if command overwrites an existing file
-alias mv='mv -i'
-alias cp='cp -i'
-alias ln='ln -i'
+# alias mv='mv -i'
+# alias cp='cp -i'
+# alias ln='ln -i'
 
 ## Colorize the grep command output for ease of use (good for log files)
 alias grep='grep --color=auto'
