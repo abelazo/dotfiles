@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Clone a repository in Github in a given folder
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   clone <repository>
+##?
+##? Arguments:
+##?   repository  Repository name within the organization
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+pushd ${WS} >& /dev/null
+git clone git@github.com:${organization}/${repository}
+popd >& /dev/null
