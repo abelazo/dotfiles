@@ -57,7 +57,9 @@ function awp() {
     profiles[${profile_name}]=${profile_name}
   done
 
-  export AWS_PROFILE=$(echo ${!profiles[@]} | tr ' ' '\n' | fzf --header 'Select the AWS account' --pointer='👉🏼' --bind "enter:become(echo {})")
+  SELECTED_PROFILE=$(echo ${!profiles[@]} | tr ' ' '\n' | fzf --header 'Select the AWS account' --pointer='👉🏼' --bind "enter:become(echo {})")
+
+  [[ -z "${SELECTED_PROFILE}" ]] && return 1 || export AWS_PROFILE=${SELECTED_PROFILE}
 
   if [ ${?} -eq 0 ]; then
     aws configure list
