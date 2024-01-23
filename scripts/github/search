@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Search elements in Github using gh CLI
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   search commits <repository>
+##?   search people
+##?   search repos [--name=<name>] [--limit=<limit>]
+##?
+##? Arguments:
+##?   commits   List commits of a give repository
+##?   people    List people of a given organization
+##?   repos     List repositories of a given organization
+##?
+##? Options:
+##?   -l, --limit=<limit>  Results limit (ignored when name is provided) [default: 100]
+##?   -n, --name=<name>    Repository name
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+list_repos() {
+  if [ -z "${name}" ]; then
+    log::note "Showing all repositories"
+    gh repo list ${organization} -L ${limit} --no-archived
+  else
+    results=$(gh search repos --owner=${organization} -L 1000 --match name ${name} --json name | jq -r .[].name)
+    log::note "Showing $(echo ${results} | wc -w) repositories"
+    echo ${results} | tr " " "\n" | sort
+  fi
+}
+
+list_people() {
+  count=1
+  page=1
+  results=$(mktemp)
+  until [ ${count} -eq 0 ]; do
+    page_content=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" '/orgs/'${organization}'/members?page='${page}'&per_page=100')
+    echo ${page_content} | jq -r .[].login >> ${results}
+    count=$(jq length <<<${page_content})
+    ((page++))
+  done
+  log::note "Showing $(cat ${results} | wc -l) people"
+  cat ${results}
+  rm -f ${results}
+}
+
+if [ "${repos}" == "true" ]; then
+  list_repos
+  exit 0
+fi
+
+if [ "${people}" == "true" ]; then
+  list_people
+  exit 0
+fi
+
+if [ "${commits}" == "true" ]; then
+  result=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/repos/${organization}/${repository}/commits?page=1&per_page=200") # | jq -r .[].commit.author.date
+fi
