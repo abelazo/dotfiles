@@ -47,3 +47,21 @@ function cd() {
     fi
   fi
 }
+
+function awp() {
+  RED='\033[0;31m'
+  NC='\033[0m' # No Color
+
+  declare -A profiles
+  for profile_name in $(aws configure list-profiles); do
+    profiles[${profile_name}]=${profile_name}
+  done
+
+  export AWS_PROFILE=$(echo ${!profiles[@]} | tr ' ' '\n' | fzf --header 'Select the AWS account' --pointer='👉🏼' --bind "enter:become(echo {})")
+
+  if [ ${?} -eq 0 ]; then
+    aws configure list
+  else
+    exit ${?}
+  fi
+}
