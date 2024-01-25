@@ -11,12 +11,10 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   search commits <repository>
-##?   search people
 ##?   search repos [--name=<name>] [--limit=<limit>]
 ##?
 ##? Arguments:
 ##?   commits   List commits of a give repository
-##?   people    List people of a given organization
 ##?   repos     List repositories of a given organization
 ##?
 ##? Options:
@@ -39,28 +37,8 @@ list_repos() {
   fi
 }
 
-list_people() {
-  count=1
-  page=1
-  results=$(mktemp)
-  until [ ${count} -eq 0 ]; do
-    page_content=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" '/orgs/'${organization}'/members?page='${page}'&per_page=100')
-    echo ${page_content} | jq -r .[].login >> ${results}
-    count=$(jq length <<<${page_content})
-    ((page++))
-  done
-  log::note "Showing $(cat ${results} | wc -l) people"
-  cat ${results}
-  rm -f ${results}
-}
-
 if [ "${repos}" == "true" ]; then
   list_repos
-  exit 0
-fi
-
-if [ "${people}" == "true" ]; then
-  list_people
   exit 0
 fi
 
