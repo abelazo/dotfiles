@@ -52,17 +52,30 @@ function awp() {
   RED='\033[0;31m'
   NC='\033[0m' # No Color
 
-  declare -A profiles
-  for profile_name in $(aws configure list-profiles); do
-    profiles[${profile_name}]=${profile_name}
-  done
+  declare -a profiles
+  output=$(aws configure list-profiles | sort)
+  profiles=(${output})
 
-  SELECTED_PROFILE=$(echo ${!profiles[@]} | tr ' ' '\n' | fzf --header 'Select the AWS account' --pointer='👉🏼' --bind "enter:become(echo {})")
+  initial_pos="1"
+  if [[ -n "${AWS_PROFILE}" ]]; then
+    for i in "${!profiles[@]}"; do
+      if [[ "${profiles[$i]}" == "${AWS_PROFILE}" ]]; then
+        initial_pos=$((i + 1))
+      fi
+    done
+  fi
 
-  [[ -z "${SELECTED_PROFILE}" ]] && return 1 || export AWS_PROFILE=${SELECTED_PROFILE}
+  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | fzf --header 'Select the AWS account' --pointer='👉🏼' --bind "load:pos(${initial_pos})" --bind "enter:become(echo {})")
+
+  [[ -z "${selected_profile}" ]] && return 1 || export AWS_PROFILE=${selected_profile}
 
   if [ ${?} -eq 0 ]; then
-    aws configure list
+    aws sts get-caller-identity --query "Account" >& /dev/null
+    if [ ${?} -eq 0 ];  then
+      aws configure list
+    else
+      aws sso login
+    fi
   else
     exit ${?}
   fi
