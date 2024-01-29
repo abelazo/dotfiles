@@ -38,7 +38,7 @@ for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.
   elif [ "${pre_commit}" == "true" ]; then
 
     all_hooks=(commit-msg post-checkout post-commit post-merge post-rewrite pre-commit pre-merge-commit pre-push pre-rebase prepare-commit-msg)
-    default_hooks=(commit-msg pre-commit pre-merge-commit)
+    default_hooks=(commit-msg pre-commit pre-merge-commit prepare-commit-msg)
 
     subcommand="install"
     msg="Installing pre-commit hooks (${default_hooks[@]}) in $(basename $(dirname $gitdir))"
