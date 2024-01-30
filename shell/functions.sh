@@ -74,7 +74,7 @@ function awp() {
     if [ ${?} -eq 0 ];  then
       aws configure list
     else
-      aws sso login
+      aws sso login && aws configure list
     fi
   else
     exit ${?}
