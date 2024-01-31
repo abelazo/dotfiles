@@ -11,9 +11,15 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   teams list [--depth=<depth>]
+##?   teams members --team=<team>
+##?
+##? Arguments:
+##?   list     List teams within the organization
+##?   members  List members of a given team
 ##?
 ##? Options:
 ##?   -d, --depth=<depth>  Max depth in the search (0 means no limit) [default: 0]
+##?   -t, --team=<team>    Team name
 ##?
 docs::eval "$@"
 
@@ -47,4 +53,12 @@ process_node() {
 
 teams=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" '/orgs/'${organization}'/teams' --paginate)
 
-process_node "null" 0 ${depth}
+if [[ "${list}" == "true" ]]; then
+  process_node "null" 0 ${depth}
+fi
+
+if [[ "${members}" == "true" ]]; then
+  team_slug=$(echo ${team} | sed 's/--/-/g')
+  members=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/orgs/${organization}/teams/${team_slug}/members" --paginate)
+  [[ ${?} -eq 0 ]] && jq -r .[].login <<<${members} | sort
+fi
