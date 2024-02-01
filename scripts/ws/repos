@@ -33,8 +33,9 @@ log::header "${action} in ${work_dir}"
 for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.terragrunt-cache" \) -o -path "*/.cache" \) -prune -o -name .git -print`; do
   pushd $(dirname $gitdir) >& /dev/null
   if [ "${pull}" == "true" ]; then
-    log::note "Updating $(basename $(dirname $gitdir))"
-    git pull
+    repo=$(basename $(dirname $gitdir))
+    log::note "Updating ${repo}"
+    git pull || log::error "Error updating ${repo}"
   elif [ "${pre_commit}" == "true" ]; then
 
     all_hooks=(commit-msg post-checkout post-commit post-merge post-rewrite pre-commit pre-merge-commit pre-push pre-rebase prepare-commit-msg)
