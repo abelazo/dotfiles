@@ -60,5 +60,10 @@ fi
 if [[ "${members}" == "true" ]]; then
   team_slug=$(echo ${team} | sed 's/--/-/g')
   members=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/orgs/${organization}/teams/${team_slug}/members" --paginate)
-  [[ ${?} -eq 0 ]] && jq -r .[].login <<<${members} | sort
+
+  if [[ ${?} -eq 0 ]]; then
+    num_members=$(jq -r .[].login <<<${members} | wc -l | xargs)
+    log::note "# ${team} (${num_members})"
+    jq -r .[].login <<<${members} | sort
+  fi
 fi
