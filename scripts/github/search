@@ -33,7 +33,7 @@ list_repos() {
   else
     results=$(gh search repos --owner=${organization} -L 1000 --match name ${name} --json name | jq -r .[].name)
     log::note "Showing $(echo ${results} | wc -w) repositories"
-    echo ${results} | tr " " "\n" | sort
+    echo ${results} | tr " " "\n" | sort | grep --color ${name}
   fi
 }
 
