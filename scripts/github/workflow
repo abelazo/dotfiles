@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Github workflows management
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   workflow run --workflow=<workflow> [--watch]
+##?
+##? Arguments:
+##?   run   Run workflow
+##?
+##? Options:
+##?   -f, --workflow=<workflow>  Workflow name [default: workflow.yaml]
+##?   -w, --watch
+##?
+docs::eval "$@"
+
+gh workflow run ${workflow}
+
+run_id=$(gh run list --workflow ci-cd-terraform.yml --json databaseId -q '.[0].databaseId')
+if [[ "${watch}" == "true" ]]; then
+  gh run watch ${run_id}
+else
+  gh run view ${run_id}
+fi
