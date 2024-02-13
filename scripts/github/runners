@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Self-hosted runners management
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   runners list [--name=<name>]
+##?   runners token
+##?
+##? Arguments:
+##?   list   List self-hosted runners
+##?   token  Issues a registration token for a new self-hosted runner
+##?
+##? Options:
+##?   -n, --name=<name>  Runner name
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [ "${list}" == "true" ]; then
+  if [ -z "${name}" ]; then
+    log::note "Showing all runners"
+    gh api \
+       -H "Accept: application/vnd.github+json" \
+       -H "X-GitHub-Api-Version: 2022-11-28" \
+       /orgs/${organization}/actions/runners
+  else
+    results=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${organization}/actions/runners | jq -r '.runners[] | select (.name | startswith("'${name}'")).name')
+    log::note "Showing $(echo ${results} | wc -w) self-hosted runners"
+    echo ${results} | tr " " "\n" | sort | grep --color ${name}
+  fi
+  exit 0
+fi
+
+if [ "${token}" == "true" ]; then
+  gh api \
+     --method POST \
+     -H "Accept: application/vnd.github+json" \
+     -H "X-GitHub-Api-Version: 2022-11-28" \
+     /orgs/${organization}/actions/runners/registration-token
+fi
