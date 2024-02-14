@@ -21,8 +21,19 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 docs::eval "$@"
 
+log::header "Launching workflow ${workflow}"
 gh workflow run ${workflow}
 
+log::header "Waiting for ${workflow} to be queued"
+c=1
+status=$(gh run list --workflow ci-cd-terraform.yml --json status -q '.[0].status')
+while [[ "${status}" != "queued" ]]; do
+  status=$(gh run list --workflow ci-cd-terraform.yml --json status -q '.[0].status')
+  ((c++)) && ((c==10)) && break
+  sleep 0.5
+done
+
+log::header "Checking ${workflow} run ${run_id} status"
 run_id=$(gh run list --workflow ci-cd-terraform.yml --json databaseId -q '.[0].databaseId')
 if [[ "${watch}" == "true" ]]; then
   gh run watch ${run_id}
