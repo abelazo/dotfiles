@@ -28,9 +28,10 @@ log::header "Waiting for ${workflow} to be queued"
 c=1
 status=$(gh run list --workflow ci-cd-terraform.yml --json status -q '.[0].status')
 while [[ "${status}" != "queued" ]]; do
+  echo "Attempt #${c}"
   status=$(gh run list --workflow ci-cd-terraform.yml --json status -q '.[0].status')
   ((c++)) && ((c==10)) && break
-  sleep 0.5
+  sleep 1
 done
 
 run_id=$(gh run list --workflow ci-cd-terraform.yml --json databaseId -q '.[0].databaseId')
