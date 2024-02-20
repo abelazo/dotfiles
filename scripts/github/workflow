@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
+basepath=$(dirname $0)
+
 ##?
 ##? Github workflows management
 ##?
@@ -21,21 +23,11 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 docs::eval "$@"
 
-log::header "Launching workflow ${workflow}"
 gh workflow run ${workflow}
 
-log::header "Waiting for ${workflow} to be queued"
-c=1
-status=$(gh run list --workflow ci-cd-terraform.yml --json status -q '.[0].status')
-while [[ "${status}" != "queued" ]]; do
-  echo "Attempt #${c}"
-  status=$(gh run list --workflow ci-cd-terraform.yml --json status -q '.[0].status')
-  ((c++)) && ((c==10)) && break
-  sleep 1
-done
+gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && wait_for_workflow ${workflow}"
 
-run_id=$(gh run list --workflow ci-cd-terraform.yml --json databaseId -q '.[0].databaseId')
-log::header "Checking ${workflow} run ${run_id} status"
+run_id=$(gh run list --workflow ${workflow} --json databaseId -q '.[0].databaseId')
 if [[ "${watch}" == "true" ]]; then
   gh run watch ${run_id}
 else
