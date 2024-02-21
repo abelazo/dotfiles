@@ -56,16 +56,9 @@ function awp() {
   output=$(aws configure list-profiles | sort)
   profiles=(${output})
 
-  initial_pos="1"
-  if [[ -n "${AWS_PROFILE}" ]]; then
-    for i in "${!profiles[@]}"; do
-      if [[ "${profiles[$i]}" == "${AWS_PROFILE}" ]]; then
-        initial_pos=$((i + 1))
-      fi
-    done
-  fi
-
-  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | fzf --header 'Select the AWS account' --pointer='👉🏼' --bind "load:pos(${initial_pos})" --bind "enter:become(echo {})")
+  default_option=""
+  test -n "${AWS_PROFILE}" && default_option="--selected ${AWS_PROFILE}"
+  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum choose ${default_option})
 
   [[ -z "${selected_profile}" ]] && return 1 || export AWS_PROFILE=${selected_profile}
 
