@@ -13,6 +13,9 @@
     open=!$DOTFILES_PATH/scripts/git/git-open
     st = status --short
 
+[branch]
+    sort = -committerdate
+
 [commit]
     gpgsign=true
     template = /Users/abelazo/.gitmessage
@@ -37,6 +40,7 @@
 
 [diff]
     colorMoved = default
+    algorithm = histogram
 
 [fetch]
     prune = true
@@ -59,6 +63,7 @@
     rebase = true
 
 [push]
+    autosetupremote = true
     gpgSign = if-asked
 
 [rebase]
