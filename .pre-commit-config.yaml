@@ -11,6 +11,12 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.13.0
+    rev: v3.16.0
     hooks:
       - id: commitizen
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.9.0
+    hooks:
+      - id: shellcheck
+        args: ["--severity=error"]
