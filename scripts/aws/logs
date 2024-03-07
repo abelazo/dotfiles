@@ -8,7 +8,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   logs get --log_group=<log_group> [--log_stream=<log_stream>]
+##?   logs get [--log_group=<log_group>][--log_stream=<log_stream>]
 ##?   logs delete --log_group=<log_group>
 ##?
 ##? Options:
@@ -17,16 +17,10 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 docs::eval "$@"
 
-
 if [ "${get}" == "true" ]; then
-  if [ "${log_stream}" == "" ]; then
-    stream_name=$(aws logs describe-log-streams --log-group-name ${log_group} | jq -r .logStreams[0].logStreamName)
-  else
-    stream_name=${log_stream}
-  fi
-
-  log::note "Getting logs for ${log_group} - ${stream_name}"
-  aws logs get-log-events --log-group-name ${log_group} --log-stream-name ${stream_name} | jq -r '.events[].message | gsub("\n"; "")'
+  [[ "${log_group}" == "" ]] && log_group=$(aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | gum choose --header "Log group...")
+  [[ "${log_stream}" == "" ]] && log_stream=$(aws logs describe-log-streams --log-group-name ${log_group} --order-by LastEventTime --descending | jq -r '.logStreams[].logStreamName' | gum choose --header "Log stream...")
+  aws logs get-log-events --log-group-name ${log_group} --log-stream-name ${log_stream} | jq -r '.events[].message | gsub("\n"; "")'
 fi
 
 if [ "${delete}" == "true" ]; then
