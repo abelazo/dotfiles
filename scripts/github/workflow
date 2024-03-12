@@ -12,18 +12,24 @@ basepath=$(dirname $0)
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   workflow run --workflow=<workflow> [--watch]
+##?   workflow run --workflow=<workflow> [--input=<input>...][--watch]
 ##?
 ##? Arguments:
 ##?   run   Run workflow
 ##?
 ##? Options:
+##?   -i, --input=<input>        Workflow input parameter (key=value format)
 ##?   -f, --workflow=<workflow>  Workflow name [default: workflow.yaml]
 ##?   -w, --watch
 ##?
 docs::eval "$@"
 
-gh workflow run ${workflow}
+workflow_inputs=""
+for i in "${input[@]}"; do
+    workflow_inputs+=" --raw-field ${i}"
+done
+
+gh workflow run ${workflow} ${workflow_inputs}
 
 gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && wait_for_workflow ${workflow}"
 
