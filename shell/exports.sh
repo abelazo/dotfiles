@@ -18,6 +18,9 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 # Java
 export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
 
+# NVM
+export NVM_DIR="$HOME/.nvm"
+
 export HOMEBREW_AUTO_UPDATE_SECS=604800 # 1 week
 export HOMEBREW_NO_ANALYTICS=true
 export HOMEBREW_BUNDLE_FILE_PATH="$DOTFILES_PATH/mac/brew/Brewfile"
