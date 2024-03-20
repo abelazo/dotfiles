@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS logs
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   sts [--quiet]
+##?
+##? Options:
+##?   -q, --quiet  Quiet output
+docs::eval "$@"
+
+current_role=$(aws sts get-caller-identity --query "Arn" --output text | cut -d'/' -f2)
+
+if [[ "${quiet}" != "true" ]]; then
+  log::note "Details for ${current_role}"
+fi
+
+aws iam get-account-authorization-details --filter Role --query 'RoleDetailList[?RoleName==`'${current_role}'`]'
