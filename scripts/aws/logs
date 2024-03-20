@@ -8,19 +8,27 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   logs get [--log_group=<log_group>][--log_stream=<log_stream>]
-##?   logs delete --log_group=<log_group>
+##?   logs get [--log-group=<log_group>][--log-stream=<log-stream>] [--message-only]
+##?   logs delete --log-group=<log-group>
 ##?
 ##? Options:
-##?   -g, --log_group=<log_group>    CloudWatch log group
-##?   -s, --log_stream=<log_stream>  CloudWatch los stream
+##?   -g, --log-group=<log-group>    CloudWatch log group
+##?   -s, --log-stream=<log-stream>  CloudWatch los stream
+##?   -m, --message-only             Show only messages
 ##?
 docs::eval "$@"
 
 if [ "${get}" == "true" ]; then
   [[ "${log_group}" == "" ]] && log_group=$(aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | gum choose --header "Log group...")
   [[ "${log_stream}" == "" ]] && log_stream=$(aws logs describe-log-streams --log-group-name ${log_group} --order-by LastEventTime --descending | jq -r '.logStreams[].logStreamName' | gum choose --header "Log stream...")
-  aws logs get-log-events --log-group-name ${log_group} --log-stream-name ${log_stream} | jq -r '.events[].message | gsub("\n"; "")'
+
+  logs=$(aws logs get-log-events --log-group-name ${log_group} --log-stream-name ${log_stream} | jq -r '.events[] | .timestamp |= (tonumber / 1000 | todateiso8601) | .ingestionTime |= (tonumber / 1000 | todateiso8601) | .message |= gsub("\n"; "")')
+
+  if [[ "${message_only}" == "true" ]]; then
+    echo ${logs} | jq -sr '.[] | .message'
+  else
+    jq . <<<${logs}
+  fi
 fi
 
 if [ "${delete}" == "true" ]; then
