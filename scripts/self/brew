@@ -6,10 +6,10 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##? Brew software management
 ##?
-#?? 1.0.0
+#?? 2.0.0
 ##?
 ##? Usage:
-##?   brew install [-f][<additional_brew_file>...]
+##?   brew install [<additional_brew_file>...][--cleanup]
 ##?   brew upgrade [-y]
 ##?
 ##? Commands:
@@ -20,8 +20,8 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   additional_brew_file  Additional Brewfiles to be installed
 ##?
 ##? Options:
-##?   -f  Forces cleanup brew installation to match given Brewfiles
-##?   -y  Upgrades all outdated formulae avoiding asking for information
+##?   -c, --cleanup  Forces cleanup of brew installation to match given Brewfiles
+##?   -y, --yes      Upgrades all outdated formulae without asking for confirmation
 ##?
 docs::eval "$@"
 
@@ -45,7 +45,7 @@ if [ "${install}" == "true" ]; then
     done
   fi
 
-  if [ "${_f}" == "true" ]; then
+  if [ "${cleanup}" == "true" ]; then
     log::header "Brew bundle cleanup"
     union_brewfile=$(mktemp)
 
