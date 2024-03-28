@@ -10,7 +10,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   brew install [<additional_brew_file>...][--cleanup]
-##?   brew upgrade [-y]
+##?   brew upgrade [--yes]
 ##?
 ##? Commands:
 ##?   install  Installs all brew formulae present in core and addtional files
@@ -78,7 +78,7 @@ if [ "${upgrade}" == "true" ]; then
   [[ -z ${outdated} ]] && exit # No additional installation required
 
   brew outdated --verbose
-  if [ "${_y}" == "true" ]; then
+  if [ "${yes}" == "true" ]; then
     upgrade_confirmation="y"
   else
     echo -n "Do you want to upgrade outdated formulae [y/N]: "
