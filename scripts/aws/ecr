@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Describe images from ECR repositories
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   ecr [--repository=<repository> | --all]
+##?
+##? Options:
+##?   -r, --repository=<repository>  Repository name
+##?   -a, --all                      List all repositories
+##?
+docs::eval "$@"
+
+if [ "${all}" == "true" ]; then
+  for repo in $(aws ecr describe-repositories | jq -r .repositories[].repositoryName); do
+    log::header "${repo}"
+    aws ecr describe-images --repository-name ${repo}
+  done
+else
+  [[ "${repository}" == "" ]] && repository=$(aws ecr describe-repositories | jq -r .repositories[].repositoryName | gum choose --header "ECR repository...")
+  log::header "${repository}"
+  aws ecr describe-images --repository-name ${repository}
+fi
