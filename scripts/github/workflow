@@ -12,30 +12,45 @@ basepath=$(dirname $0)
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   workflow run --workflow=<workflow> [--input=<input>...][--watch]
+##?   workflow run [--workflow=<workflow>][--input=<input>...][--watch]
+##?   workflow watch [--workflow=<workflow>]
 ##?
 ##? Arguments:
-##?   run   Run workflow
+##?   run    Run workflow
+##?   watch  Watch workflow run
 ##?
 ##? Options:
 ##?   -i, --input=<input>        Workflow input parameter (key=value format)
-##?   -f, --workflow=<workflow>  Workflow name [default: workflow.yaml]
-##?   -w, --watch
+##?   -f, --workflow=<workflow>  Workflow name/id
+##?   -w, --watch_run
 ##?
 docs::eval "$@"
+
+function get_workflow(){
+  choosen_workflow=$(gh workflow list --json name,id | jq -r '.[] | [(.name + " (" + (.id|tostring) + ")")] | @csv' | gum choose --header "Workflows...")
+  echo $(echo ${choosen_workflow} | cut -d '(' -f 2 | cut -d ')' -f 1)
+}
 
 workflow_inputs=""
 for i in "${input[@]}"; do
     workflow_inputs+=" --raw-field ${i}"
 done
 
-gh workflow run ${workflow} ${workflow_inputs}
+[[ "${workflow}" == "" ]] && workflow=$(get_workflow)
 
-gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && wait_for_workflow ${workflow}"
+if [[ "${run}" == "true" ]]; then
+  gh workflow run ${workflow} ${workflow_inputs}
 
-run_id=$(gh run list --workflow ${workflow} --json databaseId -q '.[0].databaseId')
+  gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && wait_for_workflow ${workflow}"
+
+  run_id=$(gh run list --workflow ${workflow} --json databaseId -q '.[0].databaseId')
+  if [[ "${watch_run}" == "true" ]]; then
+    gh run watch ${run_id}
+  else
+    gh run view ${run_id}
+  fi
+fi
+
 if [[ "${watch}" == "true" ]]; then
-  gh run watch ${run_id}
-else
-  gh run view ${run_id}
+  gh run watch $(gh run list --workflow=${workflow} --json databaseId | jq -r .[0].databaseId)
 fi
