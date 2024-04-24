@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+generate_jwt_token() {
+  local github_app_id=$1
+  local pem=$( cat $2 )
+
+  now=$(date +%s)
+  iat=$((${now} - 60)) # Issues 60 seconds in the past
+  exp=$((${now} + 600)) # Expires 10 minutes in the future
+
+  b64enc() { openssl base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n'; }
+
+  header_json='{
+    "typ":"JWT",
+    "alg":"RS256"
+  }'
+
+  # Header encode
+  header=$( echo -n "${header_json}" | b64enc )
+
+  payload_json='{
+    "iat":'"${iat}"',
+    "exp":'"${exp}"',
+    "iss":'"${github_app_id}"'
+  }'
+
+  # Payload encode
+  payload=$( echo -n "${payload_json}" | b64enc )
+
+  # Signature
+  header_payload="${header}"."${payload}"
+  signature=$(
+    openssl dgst -sha256 -sign <(echo -n "${pem}") \
+            <(echo -n "${header_payload}") | b64enc
+           )
+
+  # Create JWT
+  JWT="${header_payload}"."${signature}"
+  echo ${JWT}
+}
+
+##?
+##? Github App commands
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   app jwt --app_id=<app_id> --private_key=<private_key>
+##?   app installation
+##?   app installation_access_token --installation_id=<installation_id>
+##?
+##? Arguments:
+##?   jwt                        Generate Github App JWT token
+##?   installation               Returns the information of the organization Github Apps installation
+##?   installation_access_token  Generates a Github App installation JWT token
+##?
+##? Options:
+##?   -a, --app_id=<app_id>                    Github App ID
+##?   -i, --installation_id=<installation_id>  Github App installation ID
+##?   -k, --private_key=<private_key>          Github App private key
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [[ "${jwt}" == "true" ]]; then
+  generate_jwt_token ${app_id} ${private_key}
+fi
+
+if [[ "${installation}" == "true" ]]; then
+  args::verify_jwt_http_auth
+
+  http --auth-type bearer \
+       -a ${JWT_AUTH_TOKEN} \
+       --print=b \
+       GET https://api.github.com/orgs/${GITHUB_ORGANIZATION}/installation \
+       "Accept: application/vnd.github+json" \
+       "X-GitHub-Api-Version: 2022-11-28"
+fi
+
+if [[ "${installation_access_token}" == "true" ]]; then
+  args::verify_jwt_http_auth
+
+  http --auth-type bearer \
+       -a ${JWT_AUTH_TOKEN} \
+       --print=b \
+       POST https://api.github.com/app/installations/${installation_id}/access_tokens \
+       "Accept: application/vnd.github+json" \
+       "X-GitHub-Api-Version: 2022-11-28"
+fi
