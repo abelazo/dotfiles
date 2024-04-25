@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+basepath=$(dirname $0)
+
+##?
+##? Search users in Github using gh CLI
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   users list
+##?   users teams --user=<user> [--verbose]
+##?
+##? Arguments:
+##?   list   List all users of a Github organization
+##?   teams  List teams of a given user
+##?
+##? Options:
+##?   -u, --user=<uer>  Github user name
+##?   -v, --verbose     Verbose output
+##?
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [[ "${list}" == "true" ]]; then
+  gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/orgs/${organization}/members" --paginate | jq -r .[].login | sort
+fi
+
+if [[ "$teams" == "true" ]]; then
+  log::header "${user} teams"
+  teams_query_file="${basepath}/queries/teams.graphql"
+
+  options="--print=b"
+  if [[ "${verbose}" == "true" ]]; then
+    options="--print=hbHB"
+  fi
+
+  http --auth-type bearer -a ${JWT_AUTH_TOKEN} ${options} https://api.github.com/graphql "Accept: application/vnd.github.v4.idl" query="$( cat ${teams_query_file} )" variables='{"organization": "'${organization}'", "username": "'${user}'"}'
+fi

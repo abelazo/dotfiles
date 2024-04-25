@@ -1,0 +1,12 @@
+query Teams($username: String!, $organization: String!) {
+  organization(login: $organization) {
+    teams(first: 100, userLogins: [$username]) {
+      totalCount
+      edges {
+        node {
+          name
+        }
+      }
+    }
+  }
+}
