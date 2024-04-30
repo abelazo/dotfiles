@@ -27,7 +27,8 @@ basepath=$(dirname $0)
 docs::eval "$@"
 
 function get_workflow(){
-  choosen_workflow=$(gh workflow list --json name,id | jq -r '.[] | [(.name + " (" + (.id|tostring) + ")")] | @csv' | gum choose --header "Workflows...")
+  choosen_workflow=$(gh workflow list --json name,id | jq -r '.[] | [(.name + " (" + (.id|tostring) + ")")] | @tsv' | gum choose --header "Workflows...")
+  [[ -z ${choosen_workflow} ]] && exit 1
   echo $(echo ${choosen_workflow} | cut -d '(' -f 2 | cut -d ')' -f 1)
 }
 
