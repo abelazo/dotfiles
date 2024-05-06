@@ -12,3 +12,7 @@ shell/zsh/**/**.zwc.old
 
 # Brewfile
 os/mac/brew/Brewfile.lock.json
+
+# IDE
+# ----------------------------------
+.idea
