@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Dependabot
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   dependabot repos [--severity=<severity>]
+##?
+##? Options:
+##?   -s, --severity=<severity>  Severity [default:critical]
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+results=$(gum spin --show-output --title "Gathering $(gum style --italic ${severity}) dependabot alerts..." -- gh api --paginate -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' '/orgs/Iberia-Ent/dependabot/alerts?severity='${severity}'&state=open')
+
+if [[ "${repos}" == true ]]; then
+  (echo "Occurrences Repository" && echo ${results} | jq -r .[].repository.name | sort | uniq -c | sed 's/^ *//g') | gum table --print --separator ' '
+fi
