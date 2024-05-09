@@ -10,18 +10,34 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   dependabot repos [--severity=<severity>]
+##?   dependabot alerts [--severity=<severity>]
+##?   dependabot repo --repository=<repository> [--raw-output]
+##?
+##? Arguments:
+##?   alerts  Get all alerts of the given severity
+##?   repo    Get dependabot alerts for a given repository
 ##?
 ##? Options:
-##?   -s, --severity=<severity>  Severity [default:critical]
+##?   -o, --raw-output              Raw JSON output
+##?   -r, --repositor=<repository>  Repository
+##?   -s, --severity=<severity>     Severity [default:critical]
 ##?
 docs::eval "$@"
 
 # Set GITHUB_ORGANIZATION variable to search in your specific organization
 organization=${GITHUB_ORGANIZATION:-abelazo}
 
-results=$(gum spin --show-output --title "Gathering $(gum style --italic ${severity}) dependabot alerts..." -- gh api --paginate -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' '/orgs/Iberia-Ent/dependabot/alerts?severity='${severity}'&state=open')
 
-if [[ "${repos}" == true ]]; then
+if [[ "${alerts}" == "true" ]]; then
+  results=$(gum spin --show-output --title "Gathering $(gum style --italic ${severity}) dependabot alerts..." -- gh api --paginate -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' '/orgs/Iberia-Ent/dependabot/alerts?severity='${severity}'&state=open')
   (echo "Occurrences Repository" && echo ${results} | jq -r .[].repository.name | sort | uniq -c | sed 's/^ *//g') | gum table --print --separator ' '
+fi
+
+if [[ "${repo}" == "true" ]]; then
+  raw_results=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${organization}/${repository}/dependabot/alerts)
+  if [[ "${raw_output}" == "true" ]]; then
+    jq . <<<${raw_results}
+  else
+    jq -r '["Severity","GHSA ID", "CVE_ID", "Summary", "State"], (.[] | [ .security_advisory.severity, .security_advisory.ghsa_id, .security_advisory.cve_id, .security_advisory.summary, .state]) | @csv' <<<${raw_results} | sed 's/open/'$(gum style --foreground 212 "open")'/' | gum table --print
+  fi
 fi
