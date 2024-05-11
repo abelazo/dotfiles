@@ -71,5 +71,6 @@ fi
 
 if [[ "${repos}" == "true" ]]; then
   team_slug=$(echo ${team} | sed 's/--/-/g')
+  log::header "Repositories with permission for ${team}"
   gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${organization}/teams/${team_slug}/repos | jq -r '["Name","Admin", "Maintain", "Push", "Triage", "Pull"], (.[] | [.name, .permissions.admin, .permissions.maintain, .permissions.push, .permissions.triage, .permissions.pull]) | @csv' | gum table --print
 fi
