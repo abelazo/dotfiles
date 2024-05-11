@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Search elements in Github using gh CLI
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   search commits <repository>
+##?
+##? Arguments:
+##?   commits   List commits of a give repository
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [ "${commits}" == "true" ]; then
+  result=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/repos/${organization}/${repository}/commits?page=1&per_page=200") # | jq -r .[].commit.author.date
+fi

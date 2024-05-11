@@ -5,17 +5,15 @@ set -euo pipefail
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##?
-##? Search elements in Github using gh CLI
+##? Search repos in Github using gh CLI
 ##?
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   search commits <repository>
-##?   search repos [--name=<name>] [--limit=<limit>]
+##?   repos list [--name=<name>][--limit=<limit>]
 ##?
 ##? Arguments:
-##?   commits   List commits of a give repository
-##?   repos     List repositories of a given organization
+##?   list  List repositories of a given organization
 ##?
 ##? Options:
 ##?   -l, --limit=<limit>  Results limit (ignored when name is provided) [default: 100]
@@ -37,11 +35,7 @@ list_repos() {
   fi
 }
 
-if [ "${repos}" == "true" ]; then
+if [ "${list}" == "true" ]; then
   list_repos
   exit 0
-fi
-
-if [ "${commits}" == "true" ]; then
-  result=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/repos/${organization}/${repository}/commits?page=1&per_page=200") # | jq -r .[].commit.author.date
 fi
