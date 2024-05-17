@@ -38,9 +38,12 @@ if [[ "$teams" == "true" ]]; then
   teams_query_file="${basepath}/queries/teams.graphql"
 
   options="--print=b"
-  if [[ "${verbose}" == "true" ]]; then
-    options="--print=hbHB"
-  fi
 
-  http --auth-type bearer -a ${JWT_AUTH_TOKEN} ${options} https://api.github.com/graphql "Accept: application/vnd.github.v4.idl" query="$( cat ${teams_query_file} )" variables='{"organization": "'${organization}'", "username": "'${user}'"}'
+  results=$(http --auth-type bearer -a ${JWT_AUTH_TOKEN} ${options} https://api.github.com/graphql "Accept: application/vnd.github.v4.idl" query="$( cat ${teams_query_file} )" variables='{"organization": "'${organization}'", "username": "'${user}'"}')
+
+  if [[ "${verbose}" == "true" ]]; then
+    jq . <<<${results}
+  else
+    jq -r '.data.organization.teams.edges[].node.name' <<<${results}
+  fi
 fi
