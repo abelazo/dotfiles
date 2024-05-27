@@ -12,7 +12,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?   teams list [--depth=<depth>]
 ##?   teams members --team=<team>
-##?   teams repos   --team=<team>
+##?   teams repos --team=<team> [--output=<output>]
 ##?
 ##? Arguments:
 ##?   list     List teams within the organization
@@ -20,8 +20,9 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   repos    List repos of a given team
 ##?
 ##? Options:
-##?   -d, --depth=<depth>  Max depth in the search (0 means no limit) [default: 0]
-##?   -t, --team=<team>    Team name
+##?   -d, --depth=<depth>    Max depth in the search (0 means no limit) [default: 0]
+##?   -o, --output=<output>  Output format (table|json) [default: table]
+##?   -t, --team=<team>      Team name
 ##?
 docs::eval "$@"
 
@@ -72,5 +73,10 @@ fi
 if [[ "${repos}" == "true" ]]; then
   team_slug=$(echo ${team} | sed 's/--/-/g')
   log::header "Repositories with permission for ${team}"
-  gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${organization}/teams/${team_slug}/repos | jq -r '["Name","Admin", "Maintain", "Push", "Triage", "Pull"], (.[] | [.name, .permissions.admin, .permissions.maintain, .permissions.push, .permissions.triage, .permissions.pull]) | @csv' | gum table --print
+  result=$(gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${organization}/teams/${team_slug}/repos)
+  if [[ "${output}" == "table" ]]; then
+    echo ${result} | jq -r '["Name","Admin", "Maintain", "Push", "Triage", "Pull"], (.[] | [.name, .permissions.admin, .permissions.maintain, .permissions.push, .permissions.triage, .permissions.pull]) | @csv' | gum table --print
+  else
+    echo ${result} | jq '.[] | {"name": .name, "admin": .permissions.admin, "maintain": .permissions.maintain, "push": .permissions.push, "triage": .permissions.triage, "pull": .permissions.pull}'
+  fi
 fi
