@@ -1894,7 +1894,7 @@
 			<key>Idle Code</key>
 			<integer>0</integer>
 			<key>Initial Text</key>
-			<string>source /Users/abelazo/ws/work/work.env</string>
+			<string>source /Users/abelazo/ws/work/.config/work.env</string>
 			<key>Initial Use Transparency</key>
 			<true/>
 			<key>Jobs to Ignore</key>

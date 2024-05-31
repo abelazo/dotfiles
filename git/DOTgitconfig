@@ -71,10 +71,10 @@
 
 ; Project includes
 [includeIf "gitdir:~/ws/personal/"]
-    path=~/ws/personal/personal.gitconfig
+    path=~/ws/personal/.config/personal.gitconfig
 
 [includeIf "gitdir:~/ws/tw/"]
-    path=~/ws/tw/tw.gitconfig
+    path=~/ws/tw/.config/tw.gitconfig
 
 [includeIf "gitdir:~/ws/work/"]
-    path = ~/ws/work/work.gitconfig
+    path = ~/ws/work/.config/work.gitconfig
