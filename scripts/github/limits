@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get information about organization limits
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   limits
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+limits=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /rate_limit)
+
+jq -r '.resources | to_entries[] | "\(.key), \(.value | .limit), \(.value | .used), \(.value | .reset)"' <<<${limits} | gum table --print --columns "resource, limit, used, reset"
