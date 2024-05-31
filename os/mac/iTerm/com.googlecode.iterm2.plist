@@ -723,7 +723,7 @@
 			<key>Idle Code</key>
 			<integer>0</integer>
 			<key>Initial Text</key>
-			<string>source /Users/abelazo/ws/personal/personal.env</string>
+			<string>source /Users/abelazo/ws/personal/.config/personal.env</string>
 			<key>Initial Use Transparency</key>
 			<true/>
 			<key>Jobs to Ignore</key>
@@ -3068,7 +3068,7 @@
 			<key>Idle Code</key>
 			<integer>0</integer>
 			<key>Initial Text</key>
-			<string>source /Users/abelazo/ws/tw/tw.env</string>
+			<string>source /Users/abelazo/ws/tw/.config/tw.env</string>
 			<key>Initial Use Transparency</key>
 			<true/>
 			<key>Jobs to Ignore</key>
