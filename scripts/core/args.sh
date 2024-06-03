@@ -22,3 +22,9 @@ args::verify_jwt_http_auth() {
     exit 1
   fi
 }
+
+args::belongs_to() {
+  local value="${1}"
+  local array="${@:2}"
+  [[ ${array[@]} =~ $value ]]
+}
