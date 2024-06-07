@@ -10,9 +10,9 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   teams list [--depth=<depth>]
-##?   teams members --team=<team>
-##?   teams repos --team=<team> [--output=<output>]
+##?   team list [--depth=<depth>]
+##?   team members --team=<team>
+##?   team repos --team=<team> [--output=<output>]
 ##?
 ##? Arguments:
 ##?   list     List teams within the organization

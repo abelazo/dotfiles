@@ -12,8 +12,8 @@ basepath=$(dirname $0)
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   users list
-##?   users teams --user=<user> [--verbose]
+##?   user list
+##?   user teams --user=<user> [--verbose]
 ##?
 ##? Arguments:
 ##?   list   List all users of a Github organization

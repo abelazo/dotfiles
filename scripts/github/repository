@@ -5,14 +5,14 @@ set -euo pipefail
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##?
-##? Search repos in Github using gh CLI
+##? Rrepository actions in Github using gh CLI
 ##?
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   repos list [--name=<name>][--limit=<limit>]
-##?   repos teams --name=<name>[--output=<output>]
-##?   repos clone --name=<name>
+##?   reposistory list [--name=<name>][--limit=<limit>]
+##?   reposistory teams --name=<name>[--output=<output>]
+##?   reposistory clone --name=<name>
 ##?
 ##? Arguments:
 ##?   list   List repositories of a given organization
