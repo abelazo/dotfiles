@@ -14,15 +14,17 @@ basepath=$(dirname $0)
 ##? Usage:
 ##?   user list
 ##?   user teams --user=<user> [--verbose]
+##?   user contribution --user=<user> [--year=<year>]
 ##?
 ##? Arguments:
-##?   list   List all users of a Github organization
-##?   teams  List teams of a given user
+##?   list          List all users of a Github organization
+##?   teams         List teams of a given user
+##?   contribution  List user contributions
 ##?
 ##? Options:
-##?   -u, --user=<uer>  Github user name
-##?   -v, --verbose     Verbose output
-##?
+##?   -u, --user=<uer>   Github user name
+##?   -v, --verbose      Verbose output
+##?   -y, --year=<year>  Year of the contribution [default:2024]
 ##?
 docs::eval "$@"
 
@@ -46,4 +48,21 @@ if [[ "$teams" == "true" ]]; then
   else
     jq -r '.data.organization.teams.edges[].node.name' <<<${results}
   fi
+fi
+
+if [[ "$contribution" == "true" ]]; then
+  commits_query_file="${basepath}/queries/contributions.graphql"
+  options="--print=b"
+  raw_results=$(http --auth-type bearer -a ${JWT_AUTH_TOKEN} ${options} https://api.github.com/graphql "Accept: application/vnd.github.v4.idl" query="$( cat ${commits_query_file} )" variables='{"username": "'${user}'"}')
+
+  year_result=$(jq '[.data.user.contributionsCollection.contributionCalendar.weeks[].contributionDays[] | select(.date | startswith("'${year}'")) | .contributionCount] | add // 0' <<<${raw_results})
+
+  log::header "${user} contribution in ${year} (${year_result})"
+  header=$(printf '"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"\n')
+  result=""
+  for month in $(seq -f "%02g" 1 12); do
+    monthly_result=$(jq '[.data.user.contributionsCollection.contributionCalendar.weeks[].contributionDays[] | select(.date | startswith("'${year}'-'${month}'")) | .contributionCount] | add // 0' <<<${raw_results})
+    [[ ${result} == "" ]] && result=$(printf "\"${monthly_result}\"") || result=${result},$(printf "\"${monthly_result}\"")
+  done
+  (echo $header && echo $result) | gum table --print
 fi
