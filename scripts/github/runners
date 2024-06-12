@@ -37,21 +37,19 @@ if [ "${labels}" == "true" ]; then
 fi
 
 if [ "${list}" == "true" ]; then
+
+  results=$(gh api --paginate \
+               -H "Accept: application/vnd.github+json" \
+               -H "X-GitHub-Api-Version: 2022-11-28" \
+               /orgs/${organization}/actions/runners)
+
   if [ -z "${name}" ]; then
     log::note "Showing all runners"
-    gh api --paginate \
-       -H "Accept: application/vnd.github+json" \
-       -H "X-GitHub-Api-Version: 2022-11-28" \
-       /orgs/${organization}/actions/runners
+    jq <<<${results}
   else
-    results=$(gh api --paginate \
-                 -H "Accept: application/vnd.github+json" \
-                 -H "X-GitHub-Api-Version: 2022-11-28" \
-                 /orgs/${organization}/actions/runners | jq -r '.runners[] | select (.name | startswith("'${name}'")).name')
-    log::note "Showing $(echo ${results} | wc -w) self-hosted runners"
-    echo ${results} | tr " " "\n" | sort | grep --color ${name}
+    log::note "Showing self-hosted runners containing ${name}"
+    jq -r '.runners[] | [.name, .status] | @csv' <<<${results} | grep ${name} | gum table --columns Runner,Status --print
   fi
-  exit 0
 fi
 
 if [ "${token}" == "true" ]; then
