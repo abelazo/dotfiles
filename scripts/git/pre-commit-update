@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##?
@@ -8,10 +10,11 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   pre-commit-update [--folder=<folder>]
+##?   pre-commit-update [--folder=<folder>][--local]
 ##?
 ##? Options:
 ##?   -f, --folder=<folder>  Base folder to execute the action
+##?   -l, --local            Do not commit & push changes
 ##?
 docs::eval "$@"
 
@@ -21,17 +24,17 @@ else
   [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
 fi
 
-pre_commit_config_file_name=".pre-commit-config.yaml"
+pre_commit_config_file_name=".pre-commit-config"
 
-for pre_commit_config_path in $(find ${work_dir} -name ${pre_commit_config_file_name}); do
+for pre_commit_config_path in $(find ${work_dir} -name "${pre_commit_config_file_name}.*" -not -path "*/.terraform/*"); do
   gitdir=$(dirname ${pre_commit_config_path})
   log::header "Updating ${gitdir}"
   pushd ${gitdir} >& /dev/null
   pre-commit autoupdate
   git diff -s --exit-code -- ${pre_commit_config_file_name}
-  if [[ ${?} -ne 0 ]]; then
+  if [[ ${?} -ne 0 ]] && [[ "${local}" != "true" ]]; then
     log::warning "Changes detected. Commiting & pushing."
-    git add ${pre_commit_config_file_name} && git commit -m "chore(pre-commit): Autoupdate versions" && git pull && git push origin HEAD
+    git add ${pre_commit_config_file_name} && git commit -m "chore(pre-commit): Autoupdate versions [skip-ci]" && git pull && git push origin HEAD
   else
     log::note "No update required"
   fi

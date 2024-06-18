@@ -10,7 +10,7 @@
     la=!"git lg1 --all"
     la2=!"git lg2 --all"
     long-hidden=!"git long --reflog"
-    open=!$DOTFILES_PATH/scripts/git/git-open
+    open=!dot git git-open
     st = status --short
 
 [branch]
