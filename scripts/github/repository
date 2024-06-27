@@ -10,14 +10,16 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
+##?   reposistory clone --name=<name>
 ##?   reposistory list [--name=<name>][--limit=<limit>]
 ##?   reposistory teams --name=<name>[--output=<output>]
-##?   reposistory clone --name=<name>
+##?   reposistory templates [--name=<name>]
 ##?
 ##? Arguments:
-##?   list   List repositories of a given organization
-##?   teams  List teams permissions of a repo
-##?   clone  Clone one of the repos containing <name>
+##?   clone     Clone one of the repos containing <name>
+##?   list      List repositories of a given organization
+##?   teams     List teams permissions of a repo
+##?   templates List repository templates
 ##?
 ##? Options:
 ##?   -l, --limit=<limit>    Results limit (ignored when name is provided) [default: 100]
@@ -40,6 +42,12 @@ list_repos() {
   fi
 }
 
+if [ "${clone}" == "true" ]; then
+  results=$(gh search repos --owner=${organization} -L 1000 --match name ${name} --json name)
+  repository=$(jq -r '.[].name' <<<${results} | gum filter --header "Repository")
+  [[ repository != "" ]] && git clone git@github.com:${organization}/${repository}
+fi
+
 if [ "${list}" == "true" ]; then
   list_repos
   exit 0
@@ -57,8 +65,19 @@ if [ "${teams}" == "true" ]; then
   exit 0
 fi
 
-if [ "${clone}" == "true" ]; then
-  results=$(gh search repos --owner=${organization} -L 1000 --match name ${name} --json name)
-  repository=$(jq -r '.[].name' <<<${results} | gum filter --header "Repository")
-  [[ repository != "" ]] && git clone git@github.com:${organization}/${repository}
+if [ "${templates}" == "true" ]; then
+  if [ -z "${name}" ]; then
+    for repo in $(gh api --paginate -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /orgs/${organization}/repos | jq -r '.[].name'); do
+      result=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${organization}/$repo)
+      jq -r '{"name": .name, "template": .template_repository.name}' <<<${result}
+    done
+  else
+    result=$(mktemp)
+    for repo in $(gh search repos --owner=${organization} -L 1000 --match name ${name} --json name | jq -r .[].name); do
+      repo_result=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${organization}/$repo)
+      jq -r '[.name, .template_repository.name] | @csv' <<<${repo_result} >> ${result}
+    done
+    cat ${result} | gum table --columns "REPOSITORY, TEMPLATE" --print
+    rm ${result}
+  fi
 fi
