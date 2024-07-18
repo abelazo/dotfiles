@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS logs
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   ecs deployments [--cluster=<cluster>][--service=<service>][--output=<output>]
+##?
+##? Options:
+##?   -c, --cluster=<cluster>  ECS cluster
+##?   -s, --service=<service>  ECS service
+##?   -o, --output=<output>    Output format (json or text) [default:json]
+##?
+docs::eval "$@"
+
+if [[ "${deployments}" == "true" ]]; then
+  [[ "${cluster}" == "" ]] && cluster=$(aws ecs list-clusters | jq -r '.clusterArns[]' | gum choose --header "ECS cluster ARN...")
+  [[ "${service}" == "" ]] && service=$(aws ecs list-services --cluster ${cluster} | jq -r '.serviceArns[]' | gum choose --header "ECS service ARNs...")
+
+  deployments=$(aws ecs describe-services --cluster ${cluster} --service ${service} | jq -r .services[].deployments)
+
+  if [[ "${output}" == "text" ]]; then
+    jq -r '.[] | [.status, .rolloutState, .taskDefinition] | @csv' <<<${deployments} | gum table --print --columns "Status,Rollout state,ECS task"
+  else
+    jq . <<<${deployments}
+  fi
+fi
