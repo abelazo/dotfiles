@@ -58,7 +58,7 @@ function awp() {
 
   default_option=""
   test -n "${AWS_PROFILE}" && default_option="--selected ${AWS_PROFILE}"
-  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum choose ${default_option} --header "AWS profiles (${#profiles[@]})")
+  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum choose --ordered --select-if-one --height 15 ${default_option} --header "AWS profiles (${#profiles[@]})")
 
   [[ -z "${selected_profile}" ]] && return 1 || export AWS_PROFILE=${selected_profile}
 
