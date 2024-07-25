@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Launches a PDF tools locally
+#?? 1.0.0
+##?
+##? Usage:
+##?   pdf_tools start
+##?   pdf_tools stop
+docs::eval "$@"
+
+if [[ "${start}" == "true" ]]; then
+  docker run --rm -p 8080:8080 -e DOCKER_ENABLE_SECURITY=false -e INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false -e LANGS=en_US --rm --name pdf-tools frooodle/s-pdf:latest
+fi
+
+if [[ "${stop}" == "true" ]]; then
+  docker container ls
+  docker container stop pdf-tools
+  docker container ls
+fi
