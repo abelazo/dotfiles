@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Adds/removes collabortors to/from a repository
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   collaborators add --repository=<repository> --team_slug=<team_slug> [--permission=<permission>]
+##?   collaborators remove --repository=<repository> --team_slug=<team_slug> [--permission=<permission>]
+##?
+##? Options:
+##?   -r, --repository=<repository>  Repository to be modified
+##?   -p, --permission=<permission>  Permission (admin,pull,triage,push,maintain) [default: push]
+##?   -t, --team_slug=<team_slug>              Team to be added
+##?
+docs::eval "$@"
+
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+allowed_permissions=(
+  "admin"
+  "pull"
+  "triage"
+  "push"
+  "maintain"
+)
+
+args::belongs_to "${permission}" "${allowed_permissions[@]}" || (log::error "Permission ${permission} is not allowed" && exit -1)
+
+if [[ "${add}" == "true" ]]; then
+  verb="added"
+  method="PUT"
+  args="-f permission=${permission}"
+elif [[ "${remove}" == "true" ]]; then
+  verb="removed"
+  method="DELETE"
+  args=""
+fi
+
+gh api \
+   --method ${method} \
+   -H "Accept: application/vnd.github+json" \
+   -H "X-GitHub-Api-Version: 2022-11-28" \
+   /orgs/${organization}/teams/${team_slug}/repos/${organization}/${repository} ${args}
+
+[[ ${?} ]] && log::success "${team} ${verb} to ${repository}" || log::error "${team} NOT ${verb} from ${repository}"
