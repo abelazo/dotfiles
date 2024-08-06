@@ -11,7 +11,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   1p list [<vault>]
 ##?   1p pwd <item> [--stdout]
 ##?   1p otp <item> [--stdout]
-##?   1p gpg <item> [--stdout]
+##?   1p gpg <key_id> [--stdout]
 ##?
 docs::eval "$@"
 
@@ -27,14 +27,14 @@ fi
 if [ "${otp}" = "true" ]; then
   result=$(op item get ${item} --field type=otp --format json | jq -r .totp)
 elif [ "${gpg}" = "true" ]; then
-  gpgKeyId=$(op item list --tags GPG --format=json | jq -r '.[] | select(.title | test("'${item}'")).id')
+  gpgKeyId=$(op item list --tags GPG --format=json | jq -r '.[] | select(.title | test("'${key_id}'")).id')
 
   [[ -z ${gpgKeyId} ]] && log::error "Could not find a GPG key identified by ${item}" && exit 1
   [[ $(echo ${gpgKeyId} | wc -c) -gt 27 ]] && log::error "Could not find a UNIQUE GPG key identified by ${item}" && exit 2
 
-  result=$(op item get ${gpgKeyId} --fields label=password --format human-readable)
+  result=$(op item get ${gpgKeyId} --fields label=password --format json | jq -r .value)
 else
-  result=$(op item get ${item} --fields label=password --format human-readable)
+  result=$(op item get ${item} --fields label=password --format json | jq -r .value)
 fi
 
 if [ "${stdout}" = "true" ]; then
