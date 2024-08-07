@@ -10,10 +10,10 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   reposistory clone --name=<name>
-##?   reposistory list [--name=<name>][--limit=<limit>]
-##?   reposistory teams --name=<name>[--output=<output>]
-##?   reposistory templates [--name=<name>]
+##?   repository clone --name=<name>
+##?   repository list [--name=<name>][--limit=<limit>]
+##?   repository teams --name=<name>[--output=<output>]
+##?   repository templates [--name=<name>]
 ##?
 ##? Arguments:
 ##?   clone     Clone one of the repos containing <name>
