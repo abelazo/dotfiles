@@ -22,7 +22,7 @@ basepath=$(dirname $0)
 ##?   contribution  List user contributions
 ##?
 ##? Options:
-##?   -u, --user=<uer>   Github user name
+##?   -u, --user=<user>   Github user name
 ##?   -v, --verbose      Verbose output
 ##?   -y, --year=<year>  Year of the contribution [default:2024]
 ##?
