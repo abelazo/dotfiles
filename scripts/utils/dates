@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Diff dates
+#?? 1.0.0
+##?
+##? Usage:
+##?   dates diff --start=<start> [--end=<end>]
+##?
+##? Arguments:
+##?   diff  Difference in days between two days
+
+docs::eval "$@"
+
+if [[ "${diff}" == "true" ]]; then
+  if [[ "${end}" == "" ]]; then
+    end=$(gdate +%Y-%m-%d)
+  fi
+
+  echo $((($(gdate -d "${end}" +%s) - $(gdate -d "${start}" +%s))/86400))
+fi
