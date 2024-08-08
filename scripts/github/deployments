@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+basepath=$(dirname $0)
+
+##?
+##? Deployments insights
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   deployments list --repo=<repo> --environment=<environment> [--output=<output>]
+##?
+##? Arguments:
+##?   list  List deployments in a given environment
+##?
+##? Options:
+##?   -d, --environment=<environment>   Environment name
+##?   -r, --repo=<repo>      Repository name
+##?   -o, --output=<output>  Output format (csv|table|json) [default: table]
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [[ "${list}" == "true" ]]; then
+  raw_results=$(gh api \
+               --paginate \
+               -H "Accept: application/vnd.github+json" \
+               -H "X-GitHub-Api-Version: 2022-11-28" \
+               /repos/${organization}/${repo}/deployments)
+
+  filtered_results=$(jq -r '[.[] | select(.environment == "'${environment}'") | {"environment": .environment, "created_at": .created_at, "updated_at": .updated_at, "creator": .creator.login}]' <<<${raw_results})
+
+  if [[ "${output}" == "table" ]]; then
+    echo ${filtered_results} | jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' | gum table --print
+  elif [[ "${output}" == "csv" ]]; then
+    echo ${filtered_results} | jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv'
+  else
+    echo ${filtered_results} | jq
+  fi
+fi
