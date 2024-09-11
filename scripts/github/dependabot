@@ -10,7 +10,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   dependabot alerts [--severity=<severity>]
+##?   dependabot alerts [--severity=<severity>][--sort=<sort>]
 ##?   dependabot repo --repository=<repository> [--raw-output]
 ##?
 ##? Arguments:
@@ -21,6 +21,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   -o, --raw-output              Raw JSON output
 ##?   -r, --repositor=<repository>  Repository
 ##?   -s, --severity=<severity>     Severity (critical,high,medium or low)[default:critical]
+##?   -t, --sort=<sort>             Sort (repo,number,)[default:repo]
 ##?
 docs::eval "$@"
 
@@ -35,8 +36,12 @@ if [[ "${alerts}" == "true" ]]; then
     exit -1
   fi
 
-  results=$(gum spin --show-output --title "Gathering $(gum style --italic ${severity}) dependabot alerts..." -- gh api --paginate -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' '/orgs/'${organization}'/dependabot/alerts?severity='${severity}'&state=open')
-  (echo "Occurrences Repository" && echo ${results} | jq -r .[].repository.name | sort | uniq -c | sed 's/^ *//g') | gum table --print --separator ' '
+  results=$(gum spin --show-output --title "Gathering $(gum style --italic ${severity}) dependabot alerts..." -- gh api --paginate -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' '/orgs/'${organization}'/dependabot/alerts?severity='${severity}'&state=open&per_page=100')
+  if [[ "${sort}" == "number" ]]; then
+    (echo ${results} | jq -r .[].repository.name | sort | uniq -c | sed 's/^ *//g') | sort --key 1nr | gum table --print --separator ' ' --columns Occurrences,Repository
+  else
+    (echo ${results} | jq -r .[].repository.name | sort | uniq -c | sed 's/^ *//g') | gum table --print --separator ' ' --columns Occurrences,Repository
+  fi
 fi
 
 if [[ "${repo}" == "true" ]]; then
