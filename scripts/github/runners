@@ -11,7 +11,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   runners labels
-##?   runners list [--name=<name>]
+##?   runners list [--group=<group>]
 ##?   runners token
 ##?
 ##? Arguments:
@@ -20,7 +20,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   token   Issues a registration token for a new self-hosted runner
 ##?
 ##? Options:
-##?   -n, --name=<name>  Runner name
+##?   -g, --group=<group>  Runner group
 ##?
 docs::eval "$@"
 
@@ -38,18 +38,35 @@ fi
 
 if [ "${list}" == "true" ]; then
 
-  results=$(gh api --paginate \
-               -H "Accept: application/vnd.github+json" \
-               -H "X-GitHub-Api-Version: 2022-11-28" \
-               /orgs/${organization}/actions/runners)
+  if [[ "${group}" == "all" ]];then
+    runners=$(gh api --paginate \
+                 -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
+                 /orgs/${organization}/actions/runners)
+  elif [[ "${group}" == "" ]];then
+    runner_groups=$(gh api --paginate \
+                       -H "Accept: application/vnd.github+json" \
+                       -H "X-GitHub-Api-Version: 2022-11-28" \
+                       /orgs/${organization}/actions/runner-groups)
 
-  if [ -z "${name}" ]; then
-    log::note "Showing all runners"
-    jq <<<${results}
+    group=$(jq -r '.runner_groups[].name' <<<${runner_groups} | sort | uniq | gum filter --header "Runner group...")
+    runner_group_id=$(jq -r '.runner_groups[] | select(.name | startswith("'${group}'")).id' <<<${runner_groups})
+    runners=$(gh api --paginate \
+                 -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
+                 /orgs/${organization}/actions/runner-groups/${runner_group_id}/runners)
   else
-    log::note "Showing self-hosted runners containing ${name}"
-    jq -r '.runners[] | [.name, .status] | @csv' <<<${results} | grep ${name} | gum table --columns Runner,Status --print
+    runner_groups=$(gh api --paginate \
+                       -H "Accept: application/vnd.github+json" \
+                       -H "X-GitHub-Api-Version: 2022-11-28" \
+                       /orgs/${organization}/actions/runner-groups)
+    runner_group_id=$(jq -r '.runner_groups[] | select(.name | startswith("'${group}'")).id' <<<${runner_groups})
+    runners=$(gh api --paginate \
+                 -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
+                 /orgs/${organization}/actions/runner-groups/${runner_group_id}/runners)
   fi
+  jq -r '.runners[] | [.name, .status] | @csv' <<<${runners} | gum table --columns Runner,Status --print
 fi
 
 if [ "${token}" == "true" ]; then
