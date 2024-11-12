@@ -63,12 +63,16 @@ function awp() {
   [[ -z "${selected_profile}" ]] && return 1 || export AWS_PROFILE=${selected_profile}
 
   if [ ${?} -eq 0 ]; then
-    aws sts get-caller-identity --query "Account" >& /dev/null
-    if [ ${?} -eq 0 ];  then
-      aws configure list
-    else
-      aws sso login && aws configure list
+    # Check if we already loged in
+    aws_account_id=$(aws sts get-caller-identity --query "Account" --output text 2> /dev/null)
+    if [ ${?} -ne 0 ];  then
+      aws sso login
+      if [ ${?} -ne 0 ];  then
+        exit ${?}
+      fi
     fi
+    echo "\"${AWS_PROFILE}\",\"${aws_account_id}\"" | gum table --print --columns "Profile,Account"
+    aws configure list
   else
     exit ${?}
   fi
