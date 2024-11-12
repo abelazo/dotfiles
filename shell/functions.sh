@@ -72,7 +72,9 @@ function awp() {
       fi
     fi
     echo "\"${AWS_PROFILE}\",\"${aws_account_id}\"" | gum table --print --columns "Profile,Account"
-    aws configure list
+    if [[ "${1}" == "-d" ]]; then
+      aws configure list
+    fi
   else
     exit ${?}
   fi
