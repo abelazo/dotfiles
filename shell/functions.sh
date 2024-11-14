@@ -70,6 +70,7 @@ function awp() {
       if [ ${?} -ne 0 ];  then
         exit ${?}
       fi
+      aws_account_id=$(aws sts get-caller-identity --query "Account" --output text 2> /dev/null)
     fi
     echo "\"${AWS_PROFILE}\",\"${aws_account_id}\"" | gum table --print --columns "Profile,Account"
     if [[ "${1}" == "-d" ]]; then
