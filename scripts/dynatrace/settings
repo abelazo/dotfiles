@@ -8,9 +8,11 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   settings objects [--schema-id=<schema-id>]
+##?   settings list [--schema-id=<schema-id>]
+##?   settings get --object-id=<object-id>
 ##?
 ##? Options:
+##?   -o, --object-id=<object-id>  Object ID
 ##?   -s, --schema-id=<schema-id>  Schema ID
 ##?
 docs::eval "$@"
@@ -22,10 +24,14 @@ fi
 
 args::verify_jwt_http_auth
 
-if [ "${objects}" == "true" ]; then
+if [ "${list}" == "true" ]; then
   [[ "${schema_id}" == "" ]] && schema_id=$(http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/v2/settings/schemas" "Authorization: Api-Token ${JWT_AUTH_TOKEN}" | jq -r .items[].schemaId | sort | gum filter --height 30 --header "Schema ID...")
 
   [[ -z ${schema_id} ]] && exit 2
 
-  http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/v2/settings/objects?schemaIds=${schema_id}" "Authorization: Api-Token ${JWT_AUTH_TOKEN}"
+  http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/v2/settings/objects?schemaIds=${schema_id}" "Authorization: Api-Token ${JWT_AUTH_TOKEN}" --print b
+fi
+
+if [ "${get}" == "true" ]; then
+  http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/v2/settings/objects/${object_id}" "Authorization: Api-Token ${JWT_AUTH_TOKEN}" --print b
 fi
