@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get Dynatrace configuration for AWS
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   aws_config list
+##?   aws_config get --id=<id>
+##?
+##? Options:
+##?   -i, --id=<id>  AWS credentials ID
+##?
+docs::eval "$@"
+
+if [ -z "$DT_INSTANCE" ]; then
+  log::error "DT_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_jwt_http_auth
+
+if [ "${list}" == "true" ]; then
+  http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/config/v1/aws/credentials" "Authorization: Api-Token ${JWT_AUTH_TOKEN}" --print b
+fi
+
+if [ "${get}" == "true" ]; then
+  http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/config/v1/aws/credentials/${id}" "Authorization: Api-Token ${JWT_AUTH_TOKEN}" --print b
+fi
