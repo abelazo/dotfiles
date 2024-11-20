@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get Dynatrace settings
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   settings objects [--schema-id=<schema-id>]
+##?
+##? Options:
+##?   -s, --schema-id=<schema-id>  Schema ID
+##?
+docs::eval "$@"
+
+if [ -z "$DT_INSTANCE" ]; then
+  log::error "DT_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_jwt_http_auth
+
+if [ "${objects}" == "true" ]; then
+  [[ "${schema_id}" == "" ]] && schema_id=$(http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/v2/settings/schemas" "Authorization: Api-Token ${JWT_AUTH_TOKEN}" | jq -r .items[].schemaId | sort | gum filter --height 30 --header "Schema ID...")
+
+  [[ -z ${schema_id} ]] && exit 2
+
+  http GET "https://${DT_INSTANCE}.live.dynatrace.com/api/v2/settings/objects?schemaIds=${schema_id}" "Authorization: Api-Token ${JWT_AUTH_TOKEN}"
+fi
