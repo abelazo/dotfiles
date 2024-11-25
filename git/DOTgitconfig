@@ -44,6 +44,7 @@
 
 [fetch]
     prune = true
+    prune-tags = true
 
 [init]
     defaultBranch = main
