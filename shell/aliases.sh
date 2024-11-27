@@ -12,7 +12,7 @@ alias ls='ls -G'
 alias mkdir='mkdir -pv'
 
 # Routes
-alias tmp='pushd $HOME/tmp'
+alias tmp='pushd $WS/tmp'
 
 # Safety nets
 # do not delete / or prompt if deleting more than 3 files at a time
