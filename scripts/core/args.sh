@@ -18,7 +18,7 @@ args::has_no_args() {
 
 args::verify_jwt_http_auth() {
   if [ -z $JWT_AUTH_TOKEN ]; then
-    echo "JWT_AUTH_TOKEN environment variable not set"
+    echo "JWT_AUTH_TOKEN environment variable not set" >&2
     exit 1
   fi
 }
