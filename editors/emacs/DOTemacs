@@ -32,7 +32,6 @@
 ;; Fill mode
 (setq-default fill-column 120)
 
-
 ;; Backups
 (setq backup-directory-alist `(("." . "~/.emacs.d/auto-save-list")))
 
@@ -66,7 +65,7 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(just-mode terraform-mode markdown-mode magit evil-numbers)))
+   '(yaml-mode just-mode terraform-mode markdown-mode magit evil-numbers)))
 
 ;; ediff
 ;; Usage: emacs -diff file1 file2
