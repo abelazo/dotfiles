@@ -28,7 +28,6 @@ docs::eval "$@"
 if [ "${install}" == "true" ]; then
 
   log::header "Installing  homebrew formulae"
-  export HOMEBREW_NO_AUTO_UPDATE=
   core_brewfile=${DOTFILES_PATH}/os/mac/brew/Brewfile
   log::note "Installing CORE Brewfile: ${core_brewfile}"
   brew bundle --file=${core_brewfile}
