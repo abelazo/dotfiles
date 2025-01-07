@@ -3,25 +3,38 @@
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##?
-##? Get AWS S3
+##? AWS S3 operations
 ##?
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   s3 empty --bucket=<bucket>
+##?   s3 lsb [--output=<output>]
+##?   s3 ls [--bucket=<bucket>][--output=<output>]
 ##?
 ##? Options:
-##?   -b, --bucket=<bucket>    S3 bucket
+##?   -b, --bucket=<bucket>    AWS S3 bucket
+##?   -o, --output=<output>    Output format (json or table) [default:table]
 ##?
 docs::eval "$@"
 
-log::note "Empting bucket ${bucket}"
-versions=$(aws s3api list-object-versions --bucket ${bucket})
+if [ "${lsb}" == "true" ]; then
+  buckets=$(aws s3api list-buckets)
 
-num_versions=$(jq '.Versions | length' <<<${versions})
-if [ ${num_versions}  -gt 0 ]; then
-  objects=$(jq '{Objects: [.Versions[] | {Key:.Key, VersionId : .VersionId}], Quiet: false}' <<<${versions})
-  aws s3api delete-objects --bucket ${bucket} --delete "${objects}"
-else
-  log::warning "Bucket ${bucket} is already empty"
+  if [[ "${output}" == "json" ]]; then
+    jq . <<<${buckets}
+  else
+    jq -r '.Buckets[] | [.Name, .CreationDate] | @csv' <<<${buckets} | gum table --print --columns "Name,Creation date"
+  fi
+fi
+
+if [ "${ls}" == "true" ]; then
+  [[ "${bucket}" == "" ]] && bucket=$(aws s3api list-buckets | jq -r '.Buckets[].Name' | gum choose --header "Bucket...")
+
+  content=$(aws s3api list-objects --bucket ${bucket})
+
+  if [[ "${output}" == "json" ]]; then
+    jq . <<<${content}
+  else
+    jq -r '.Contents[] | [.Key, .Size, .LastModified] | @csv' <<<${content} | gum table --print --columns "Object,Size,Last modified"
+  fi
 fi
