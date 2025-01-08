@@ -12,6 +12,7 @@ basepath=$(dirname $0)
 #?? 1.0.0
 ##?
 ##? Usage:
+##?   workflow list [--workflow=<workflow>]
 ##?   workflow run [--workflow=<workflow>][--input=<input>...][--follow]
 ##?   workflow watch [--workflow=<workflow>]
 ##?
@@ -32,14 +33,18 @@ function get_workflow(){
   echo $(echo ${choosen_workflow} | cut -d '(' -f 2 | cut -d ')' -f 1)
 }
 
-workflow_inputs=""
-for i in "${input[@]}"; do
-    workflow_inputs+=" --raw-field ${i}"
-done
-
 [[ "${workflow}" == "" ]] && workflow=$(get_workflow)
 
+if [[ "${list}" == "true" ]]; then
+  gh workflow view ${workflow}
+fi
+
 if [[ "${run}" == "true" ]]; then
+  workflow_inputs=""
+  for i in "${input[@]}"; do
+    workflow_inputs+=" --raw-field ${i}"
+  done
+
   gh workflow run ${workflow} ${workflow_inputs}
 
   gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && wait_for_workflow ${workflow}"
