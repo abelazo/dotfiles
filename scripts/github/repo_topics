@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Rrepository topics
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   repo_topic list --repo=<repo>
+##?   repo_topic add --repo=<repo> [--topic=<topic>]
+##?   repo_topic remove --repo=<repo> [--topic=<topic>]
+##?
+##? Arguments:
+##?   list    List repository topics
+##?   add     Add a new repository topic
+##?   remove  Remove an existing repository topic
+##?
+##? Options:
+##?   -r, --repo=<repo>      Repository name
+##?   -t, --topic=<topic>    Repository topic
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [ "${list}" == "true" ]; then
+  log::header "${repo} topics"
+  gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${organization}/${repo}/topics | jq '.'
+fi
+
+if [ "${add}" == "true" ]; then
+  log::header "Adding topic to ${repo}"
+  existing_topics=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${organization}/${repo}/topics | jq -r '.names[]')
+  [[ "${topic}" == "" ]] && topic=$(gum input --cursor.foreground "#F4AC45" --prompt.foreground "#04B575" --prompt "Topic? " --placeholder "topic")
+
+  args="-f names[]=${topic}"
+  for t in ${existing_topics}; do
+    args="${args} -f names[]=${t}"
+  done
+  gh api \
+     --method PUT \
+     -H "Accept: application/vnd.github+json" \
+     -H "X-GitHub-Api-Version: 2022-11-28" \
+     /repos/${organization}/${repo}/topics \
+     ${args}
+fi
+
+if [ "${remove}" == "true" ]; then
+  log::header "Removing topic from ${repo}"
+  existing_topics=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/${organization}/${repo}/topics | jq -r '.names[]')
+  [[ "${topic}" == "" ]] && topic=$(echo ${existing_topics} | tr ' ' '\n' | gum choose --header "Topic to be removed...")
+
+  args=""
+  for t in ${existing_topics}; do
+    if [[ "${t}" != "${topic}" ]]; then
+      args="${args} -f names[]=${t}"
+    fi
+  done
+  gh api \
+     --method PUT \
+     -H "Accept: application/vnd.github+json" \
+     -H "X-GitHub-Api-Version: 2022-11-28"  \
+     /repos/${organization}/${repo}/topics \
+     ${args}
+fi
