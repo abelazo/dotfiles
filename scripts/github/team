@@ -30,7 +30,7 @@ docs::eval "$@"
 organization=${GITHUB_ORGANIZATION:-abelazo}
 
 process_node() {
-  local parent_name=${1}
+  local parent_name="${1}"
   local current_level=${2}
   local depth=${3}
 
@@ -41,16 +41,17 @@ process_node() {
   if [[ "${parent_name}" == "null" ]]; then
     childs=$(jq -r '[.[] | select(.parent == null)]' <<<${teams})
   else
-    echo ${parent_name}
-    childs=$(jq -r '[.[] | select(.parent.name == "'${parent_name}'")]' <<<${teams})
+    spaces=$(( 2 * (current_level-1) ))
+    printf "%${spaces}s%s\n" '' "$parent_name"
+    childs=$(jq -r '[.[] | select(.parent.name == "'"${parent_name}"'")]' <<<${teams})
   fi
 
   if [[ $(jq length <<<${childs}) -eq 0 ]]; then
     return
   else
-    for child in $(jq -r .[].name <<<${childs}); do
+    while read -r child; do
       process_node "${child}" $((current_level + 1)) ${depth}
-    done
+    done < <(jq -r '.[].name' <<<${childs})
   fi
 }
 
