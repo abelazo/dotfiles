@@ -46,7 +46,7 @@ export DIRENV_LOG_FORMAT=
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # NVM
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"  # This loads nvm
 
 # SDKMAN
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
