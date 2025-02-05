@@ -10,17 +10,63 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   branch age [--remote]
-##?   branch old-age [--remote]
+##?   branch agev0 [--remote]
+##?   branch agev1 [--remote]
+##?   branch agev2 [--remote]
+##?   branch agev3 [--remote]
+##?   branch not-merged [--base=<base>]
+##?   branch to-merge --upstream=<upstream> [--base=<base>]
 ##?
 ##? Options:
-##?   -r, --remote   Remote branches only
+##?   -b, --base=<base>          Base branch [default:develop]
+##?   -r, --remote               Remote branches only
+##?   -u, --upstream=<upstream>  Ref branch
 ##?
 docs::eval "$@"
 
-if [ "${old_age}" == "true" ]; then
+if [ "${agev0}" == "true" ]; then
   remote_arg=""
   [[ "${remote}" == "true" ]] && remote_arg="--remote"
   # Show branches age (author date) in current git repo
-  git branch ${remote_arg} --sort=-authordate --format '%(authordate:iso) %(align:left,25)%(refname:short)%(end) %(subject)'
+  git branch ${remote_arg} --sort=authordate --format '%(authordate:iso) %(align:left,25)%(refname:short)%(end) %(subject)'
+fi
+
+if [ "${agev1}" == "true" ]; then
+  # Show branches age (author date) in current git repo
+  remote_arg=""
+  [[ "${remote}" == "true" ]] && remote_arg="--remote"
+  for b in `git branch ${remote_arg} | awk '{print $1}'| grep -v "*"`; do \
+    echo `git show --color=always --pretty=format:"%Cgreen%ci %Cblue%cr %Cred%cn %Creset" $b | \
+    head -n 1`$b
+  done | sort
+fi
+
+if [ "${agev2}" == "true" ]; then
+  # Show branches age (author date) in current git repo
+  target="refs/heads"
+  [[ "${remote}" == "true" ]] && target="refs/remotes"
+  git for-each-ref --sort=authordate --format '%(authordate:iso) %(align:left,25)%(refname:short)%(end) %(subject)' ${target}
+fi
+
+if [ "${agev3}" == "true" ]; then
+  target="refs/heads"
+  [[ "${remote}" == "true" ]] && target="refs/remotes"
+
+  eval "$(
+    git for-each-ref --shell --format \
+    "git --no-pager log -1 --date=iso --format='%%ad '%(align:left,25)%(refname:short)%(end)' %%h %%s' \$(git merge-base %(refname:short) develop);" \
+    ${target}
+  )" | sort
+fi
+
+if [ "${not_merged}" == "true" ]; then
+#  for b in `git branch --remotes --no-merged origin/${base} | awk '{print $1}'| grep -v "*"`; do \
+  for b in `git branch --all --no-merged origin/${base} | awk '{print $1}'| grep -v "*"`; do \
+    echo `git show --color=always --pretty=format:"%C(bold blue)%h%C(reset) %C(bold green)(%ci)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)" $b | \
+    head -n 1`
+  done | sort -k2
+fi
+
+if [ "${to_merge}" == "true" ]; then
+  git cherry -v ${base} ${upstream}
 fi
