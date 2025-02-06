@@ -34,6 +34,8 @@ if [[ "${list}" == "true" ]]; then
 
   if [[ ${state} == "closed" ]]; then
     jq -r '.[] | [.number, .title, .state, .created_at, .closed_at, .merged_at, ((((.closed_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.created_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor)] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at,Closed at,Merged at, Diff (h.)"
+  elif [[ ${state} == "open" ]]; then
+    jq -r '.[] | [.number, .title, .state, .created_at] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at"
   else
     jq -r '.[] | [.number, .title, .state, .created_at, .closed_at, .merged_at] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at,Closed at,Merged at"
   fi
