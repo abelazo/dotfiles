@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+basepath=$(dirname $0)
+
+##?
+##? Pull Requests
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   pr list [--state=<state>][--paginate]
+##?
+##? Arguments:
+##?   list   Get PR information
+##?
+##? Options:
+##?   -p, --paginate       If set, all pages will be retrieved
+##?   -s, --state=<state>  State of the Pull Request. It can be open, closed, all. [default:open]
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+
+if [[ "${list}" == "true" ]]; then
+  paginate_arg=""
+  [[ "${paginate}" == "true" ]] && paginate_arg="--paginate"
+  prs=$(gum spin --title "Waiting for pages..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs ${state} ${paginate_arg}")
+
+  if [[ ${state} == "closed" ]]; then
+    jq -r '.[] | [.number, .title, .state, .created_at, .closed_at, .merged_at, ((((.closed_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.created_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor)] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at,Closed at,Merged at, Diff (h.)"
+  else
+    jq -r '.[] | [.number, .title, .state, .created_at, .closed_at, .merged_at] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at,Closed at,Merged at"
+  fi
+fi

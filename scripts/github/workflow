@@ -47,7 +47,7 @@ if [[ "${run}" == "true" ]]; then
 
   gh workflow run ${workflow} ${workflow_inputs}
 
-  gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && wait_for_workflow ${workflow}"
+  gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && github::wait_for_workflow ${workflow}"
 
   run_id=$(gh run list --workflow ${workflow} --json databaseId -q '.[0].databaseId')
   if [[ "${follow}" == "true" ]]; then
