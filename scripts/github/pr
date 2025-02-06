@@ -6,20 +6,39 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 basepath=$(dirname $0)
 
+format_output() {
+  local report=${1}
+
+  # Header
+  echo '"ID","Title","Status","Created at","Closed at","Merged at","Diff (h.)"'
+
+  # Body
+  while read -r line; do
+    local string_diff=$(echo "$line" | cut -d ',' -f 7)
+    diff=$(($string_diff))
+    if [[ ${diff} -gt ${threshold} ]]; then
+      echo ${line} | sed "s/,${diff}/,$(gum style --foreground 212 "${string_diff}")/"
+    else
+      echo ${line}
+    fi
+  done < ${report}
+}
+
 ##?
 ##? Pull Requests
 ##?
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   pr list [--state=<state>][--paginate]
+##?   pr list [--state=<state>][--paginate][--threshold=<threshold>]
 ##?
 ##? Arguments:
 ##?   list   Get PR information
 ##?
 ##? Options:
-##?   -p, --paginate       If set, all pages will be retrieved
-##?   -s, --state=<state>  State of the Pull Request. It can be open, closed, all. [default:open]
+##?   -p, --paginate               If set, all pages will be retrieved
+##?   -s, --state=<state>          State of the Pull Request. It can be open, closed, all. [default:open]#
+##?   -t, --threshold=<threshold>  Threshold in hours to highlight diff. [default:24]
 ##?
 docs::eval "$@"
 
@@ -30,13 +49,11 @@ organization=${GITHUB_ORGANIZATION:-abelazo}
 if [[ "${list}" == "true" ]]; then
   paginate_arg=""
   [[ "${paginate}" == "true" ]] && paginate_arg="--paginate"
-  prs=$(gum spin --title "Waiting for pages..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs ${state} ${paginate_arg}")
 
-  if [[ ${state} == "closed" ]]; then
-    jq -r '.[] | [.number, .title, .state, .created_at, .closed_at, .merged_at, ((((.closed_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.created_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor)] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at,Closed at,Merged at, Diff (h.)"
-  elif [[ ${state} == "open" ]]; then
-    jq -r '.[] | [.number, .title, .state, .created_at] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at"
-  else
-    jq -r '.[] | [.number, .title, .state, .created_at, .closed_at, .merged_at] | @csv' <<<${prs} | gum table --print --columns "Id,Title,State,Created at,Closed at,Merged at"
-  fi
+  report=$(mktemp)
+  gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs ${state} ${paginate_arg}" >> ${report}
+
+  format_output ${report} | gum table --print
+
+  rm ${report}
 fi
