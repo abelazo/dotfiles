@@ -15,7 +15,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   branch agev2 [--remote]
 ##?   branch agev3 [--remote]
 ##?   branch not-merged [--base=<base>]
-##?   branch to-merge --upstream=<upstream> [--base=<base>]
+##?   branch to-merge [--upstream=<upstream>][--base=<base>]
 ##?
 ##? Options:
 ##?   -b, --base=<base>          Base branch [default:develop]
@@ -61,12 +61,18 @@ fi
 
 if [ "${not_merged}" == "true" ]; then
 #  for b in `git branch --remotes --no-merged origin/${base} | awk '{print $1}'| grep -v "*"`; do \
-  for b in `git branch --all --no-merged origin/${base} | awk '{print $1}'| grep -v "*"`; do \
+  for b in `git branch --all --no-merged origin/${base} | awk '{print $1}'| grep -v "*"`; do
     echo `git show --color=always --pretty=format:"%C(bold blue)%h%C(reset) %C(bold green)(%ci)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)" $b | \
     head -n 1`
   done | sort -k2
 fi
 
 if [ "${to_merge}" == "true" ]; then
+  if [[ -z ${upstream}  ]]; then
+    unmerged_branches=$(for b in `git branch --all --no-merged origin/${base} | awk '{print $1}'| grep -v "*"`; do
+                 echo $b
+               done | sort)
+    upstream=$(echo ${unmerged_branches} | gum filter --input-delimiter=" " --height 15 --header "Branch...")
+  fi
   git cherry -v ${base} ${upstream}
 fi
