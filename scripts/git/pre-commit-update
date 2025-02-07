@@ -24,15 +24,15 @@ else
   [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
 fi
 
-pre_commit_config_file_name=".pre-commit-config"
+pre_commit_config_file_name=".pre-commit-config.yaml"
 
-for pre_commit_config_path in $(find ${work_dir} -name "${pre_commit_config_file_name}.*" -not -path "*/.terraform/*"); do
+for pre_commit_config_path in $(find ${work_dir} -name "${pre_commit_config_file_name}" -not -path "*/.terraform/*"); do
   gitdir=$(dirname ${pre_commit_config_path})
   log::header "Updating ${gitdir}"
   pushd ${gitdir} >& /dev/null
   pre-commit autoupdate
-  git diff -s --exit-code -- ${pre_commit_config_file_name}
-  if [[ ${?} -ne 0 ]] && [[ "${local}" != "true" ]]; then
+  changes=$(git diff --name-only -- ${pre_commit_config_file_name})
+  if [[ ${changes} != "" ]] && [[ "${local}" != "true" ]]; then
     log::warning "Changes detected. Commiting & pushing."
     git add ${pre_commit_config_file_name} && git commit -m "chore(pre-commit): Autoupdate versions [skip ci]" && git pull && git push origin HEAD
   else
