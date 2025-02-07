@@ -30,13 +30,13 @@ format_output() {
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   pr list --repository=<repository> [--state=<state>][--paginate][--threshold=<threshold>]
+##?   pr list --repository=<repository> [--state=<state>][--pages=<pages>][--threshold=<threshold>]
 ##?
 ##? Arguments:
 ##?   list   Get PR information
 ##?
 ##? Options:
-##?   -p, --paginate                 If set, all pages will be retrieved
+##?   -p, --pages=<pages>            Number of pages [default:1]
 ##?   -r, --repository=<repository>  If set, all pages will be retrieved
 ##?   -s, --state=<state>            State of the Pull Request. It can be open, closed, all. [default:open]#
 ##?   -t, --threshold=<threshold>    Threshold in hours to highlight diff. [default:24]
@@ -47,11 +47,8 @@ docs::eval "$@"
 organization=${GITHUB_ORGANIZATION:-abelazo}
 
 if [[ "${list}" == "true" ]]; then
-  paginate_arg=""
-  [[ "${paginate}" == "true" ]] && paginate_arg="--paginate"
-
   report=$(mktemp)
-  gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs ${organization} ${repository} ${state} ${paginate_arg}" >> ${report}
+  gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs ${organization} ${repository} ${state} ${pages}" >> ${report}
   format_output ${report} | gum table --print
 
   rm ${report}
