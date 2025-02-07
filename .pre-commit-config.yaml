@@ -11,6 +11,6 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
       - id: commitizen
