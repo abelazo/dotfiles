@@ -56,9 +56,8 @@ function awp() {
   output=$(aws configure list-profiles | sort)
   profiles=(${output})
 
-  default_option=""
-  test -n "${AWS_PROFILE}" && default_option="--selected ${AWS_PROFILE}"
-  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum choose --ordered --select-if-one --height 15 ${default_option} --header "AWS profiles (${#profiles[@]})")
+  height=$((${#profiles[@]} + 4)) # 4 = Fitler headers & footers
+  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum filter --select-if-one --limit=1 --height=${height} --header "AWS profiles (${#profiles[@]})")
 
   [[ -z "${selected_profile}" ]] && return 1 || export AWS_PROFILE=${selected_profile}
 
