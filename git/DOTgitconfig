@@ -12,6 +12,7 @@
     long-hidden=!"git long --reflog"
     open=!dot git git-open
     st = status --short
+    contributors = shortlog --summary --numbered --email
 
 [branch]
     sort = -committerdate
