@@ -49,9 +49,6 @@ function cd() {
 }
 
 function awp() {
-  RED='\033[0;31m'
-  NC='\033[0m' # No Color
-
   declare -a profiles
   output=$(aws configure list-profiles | sort)
   profiles=(${output})
@@ -77,5 +74,12 @@ function awp() {
     fi
   else
     exit ${?}
+  fi
+}
+
+function awi() {
+  if [[ -n "$AWS_PROFILE" ]]; then
+    aws_account_id=$(aws sts get-caller-identity --query "Account" --output text 2> /dev/null)
+    echo "\"${AWS_PROFILE}\",\"${aws_account_id}\"" | gum table --print --columns "Profile,Account"
   fi
 }
