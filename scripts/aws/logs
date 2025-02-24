@@ -19,8 +19,8 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 if [ "${get}" == "true" ]; then
-  [[ "${log_group}" == "" ]] && log_group=$(aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | gum choose --header "Log group...")
-  [[ "${log_stream}" == "" ]] && log_stream=$(aws logs describe-log-streams --log-group-name ${log_group} --order-by LastEventTime --descending | jq -r '.logStreams[].logStreamName' | gum choose --height 15 --header "Log stream...")
+  [[ "${log_group}" == "" ]] && log_group=$(aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | gum filter --header "Log group...")
+  [[ "${log_stream}" == "" ]] && log_stream=$(aws logs describe-log-streams --log-group-name ${log_group} --order-by LastEventTime --descending | jq -r '.logStreams[].logStreamName' | gum filter --height 15 --header "Log stream...")
 
   logs=$(aws logs get-log-events --log-group-name ${log_group} --log-stream-name ${log_stream} | jq -r '[.events[] | .timestamp |= (tonumber / 1000 | todateiso8601) | .ingestionTime |= (tonumber / 1000 | todateiso8601) | .message |= gsub("\n"; "")]')
 
