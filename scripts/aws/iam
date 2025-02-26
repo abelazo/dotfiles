@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? AWS IAM Role information
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   iam describe-role [--role-name=<role-name>][--policy-name=<policy-name>][--output=<output>]
+##?
+##? Options:
+##?   -r, --role-name=<role-name>      Role name
+##?   -p, --policy-name=<policy-name>  Policy name
+##?
+docs::eval "$@"
+
+if [ "${describe_role}" == "true" ]; then
+  [[ "${role_name}" == "" ]] && role_name=$(aws iam list-roles | jq -r '.Roles[].RoleName' | gum filter --header "Role name...")
+  [[ "${policy_name}" == "" ]] && policy_name=$(aws iam list-role-policies --role-name "${role_name}" | jq -r .PolicyNames[] | gum filter --header "Role policy...")
+
+  log::header "${role_name}"
+  aws iam get-role --role-name ${role_name} | jq .
+
+  echo "------------------------------------------"
+  log::note "==> ${policy_name} <=="
+  aws iam get-role-policy --role-name ${role_name} --policy-name ${policy_name} | jq .
+fi
