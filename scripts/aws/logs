@@ -8,7 +8,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   logs get [--log-group=<log_group>][--log-stream=<log-stream>][--output=<output>]
+##?   logs get [--log-group=<log-group>][--log-stream=<log-stream>][--output=<output>]
 ##?   logs delete --log-group=<log-group>
 ##?
 ##? Options:
