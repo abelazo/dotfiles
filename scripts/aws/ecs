@@ -20,8 +20,8 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 if [[ "${deployments}" == "true" ]]; then
-  [[ "${cluster}" == "" ]] && cluster=$(aws ecs list-clusters | jq -r '.clusterArns[]' | gum choose --header "ECS cluster ARN...")
-  [[ "${service}" == "" ]] && service=$(aws ecs list-services --cluster ${cluster} | jq -r '.serviceArns[]' | gum choose --header "ECS service ARNs...")
+  cluster=$(aws ecs list-clusters | jq -r '.clusterArns[]' | gum filter --select-if-one --value "${cluster}" --header "ECS cluster ARN...")
+  service=$(aws ecs list-services --cluster ${cluster} | jq -r '.serviceArns[]' | gum filter --select-if-one --value "${service}" --header "ECS service ARNs...")
 
   deployments=$(aws ecs describe-services --cluster ${cluster} --service ${service} | jq -r .services[].deployments)
 
@@ -33,7 +33,7 @@ if [[ "${deployments}" == "true" ]]; then
 fi
 
 if [[ "${task_definition}" == "true" ]]; then
-  [[ "${definition}" == "" ]] && definition=$(aws ecs list-task-definitions | jq -r '.taskDefinitionArns[]' | gum filter --header "ECS task definition...")
+  definition=$(aws ecs list-task-definitions | jq -r '.taskDefinitionArns[]' | gum filter --select-if-one --value "${definition}" --header "ECS task definition...")
 
   aws ecs describe-task-definition --task-definition ${definition} | jq .
 fi
