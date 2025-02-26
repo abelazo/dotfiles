@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Elastic File System information
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   efs list [--output=<output>]
+##?
+##? Options:
+##?   -o, --output=<output>   Output format (json, text)[default: text]
+##?
+docs::eval "$@"
+
+if [ "${list}" == "true" ]; then
+  file_systems=$(aws efs describe-file-systems)
+
+  if [[ "${output}" == "json" ]]; then
+    jq . <<<${file_systems}
+  else
+    jq -r '.FileSystems[] | [(.Tags[] | select(.Key == "Name") | .Value), .FileSystemId, .FileSystemArn] | @csv' <<<${file_systems} | gum table --print --columns "Name, ID, ARN"
+  fi
+fi
