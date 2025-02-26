@@ -9,11 +9,13 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   ecs deployments [--cluster=<cluster>][--service=<service>][--output=<output>]
+##?   ecs task-definition [--definition=<definition>]
 ##?
 ##? Options:
-##?   -c, --cluster=<cluster>  ECS cluster
-##?   -s, --service=<service>  ECS service
-##?   -o, --output=<output>    Output format (json or text) [default:json]
+##?   -c, --cluster=<cluster>        ECS cluster
+##?   -d, --definition=<definition>  ECS Task Definition
+##?   -s, --service=<service>        ECS service
+##?   -o, --output=<output>          Output format (json or text) [default:json]
 ##?
 docs::eval "$@"
 
@@ -28,4 +30,10 @@ if [[ "${deployments}" == "true" ]]; then
   else
     jq . <<<${deployments}
   fi
+fi
+
+if [[ "${task_definition}" == "true" ]]; then
+  [[ "${definition}" == "" ]] && definition=$(aws ecs list-task-definitions | jq -r '.taskDefinitionArns[]' | gum filter --header "ECS task definition...")
+
+  aws ecs describe-task-definition --task-definition ${definition} | jq .
 fi
