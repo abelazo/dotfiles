@@ -13,7 +13,7 @@ basepath=$(dirname $0)
 ##?
 ##? Usage:
 ##?   workflow list [--workflow=<workflow>]
-##?   workflow run [--workflow=<workflow>][--input=<input>...][--follow]
+##?   workflow run [--workflow=<workflow>][--branch=<branch>][--input=<input>...][--follow]
 ##?   workflow watch [--workflow=<workflow>]
 ##?
 ##? Arguments:
@@ -21,6 +21,7 @@ basepath=$(dirname $0)
 ##?   watch  Watch workflow run
 ##?
 ##? Options:
+##?   -b, --branch=<branch>      Branch
 ##?   -i, --input=<input>        Workflow input parameter (key=value format)
 ##?   -f, --workflow=<workflow>  Workflow name/id
 ##?   -w, --follow
@@ -45,7 +46,10 @@ if [[ "${run}" == "true" ]]; then
     workflow_inputs+=" --raw-field ${i}"
   done
 
-  gh workflow run ${workflow} ${workflow_inputs}
+  workflow_branch=""
+  [[ "${branch}" != "" ]] && workflow_branch="--ref ${branch}"
+
+  gh workflow run ${workflow} ${workflow_inputs} ${workflow_branch}
 
   gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && github::wait_for_workflow ${workflow}"
 
