@@ -8,10 +8,12 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
+##?   repos branches [--folder=<folder>]
 ##?   repos pull [--folder=<folder>]
 ##?   repos pre-commit [--uninstall][--folder=<folder>][--hooks=<hooks>]
 ##?
 ##? Arguments:
+##?   branches    Show current branches of current repositories
 ##?   pull        Pull all git repos
 ##?   pre-commit  Runs pre-commit install in all git repos
 ##?
@@ -28,12 +30,19 @@ else
   [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
 fi
 
-[[ "${pull}" == true ]] && action="Pulling repositories" || action="Installing pre-commit"
+
+[[ "${branches}" == "true" ]] && action="Getting local branches"
+[[ "${pull}" == "true" ]] && action="Pulling repositories"
+[[ "${pre-commit}" == "true" ]] && action="Installing pre-commit"
 log::header "${action} in ${work_dir}"
 
 for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.terragrunt-cache" \) -o -path "*/.cache" \) -prune -o -name .git -print`; do
   pushd $(dirname $gitdir) >& /dev/null
-  if [ "${pull}" == "true" ]; then
+  if [[ "${branches}" == "true" ]]; then
+    repo=$(basename $(dirname $gitdir))
+    log::note "Branches in ${repo}"
+    git branch
+  elif [ "${pull}" == "true" ]; then
     repo=$(basename $(dirname $gitdir))
     log::note "Updating ${repo}"
     git pull || log::error "Error updating ${repo}"
