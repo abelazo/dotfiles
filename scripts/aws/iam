@@ -13,6 +13,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   iam describe-role [--role-name=<role-name>][--policy-name=<policy-name>]
 ##?   iam policy-entities [--policy-name=<policy-name>]
 ##?   iam policy-permissions [--policy-name=<policy-name>][--policy-version=<policy_version>]
+##?   iam policy-diff [--policy-name=<policy-name>]
 ##?
 ##? Options:
 ##?   -r, --role-name=<role-name>            Role name
@@ -51,4 +52,29 @@ if [[ "${policy_permissions}" == "true" ]]; then
 
   log::header "Policy (${policy_version}) permissions: ${policy_arn}"
   aws iam get-policy-version --policy-arn ${policy_arn} --version-id ${policy_version}
+fi
+
+if [[ "${policy_diff}" == "true" ]]; then
+  [[ "${policy_name}" == "" ]] && policy_name=$(aws iam list-policies | jq -r '.Policies[].PolicyName' | gum filter --header "Policy...")
+
+  policy_arn=$(aws iam list-policies | jq -r '.Policies[] | select(.PolicyName == "'${policy_name}'") | .Arn')
+
+  versions=$(aws iam list-policy-versions --policy-arn ${policy_arn} | jq -r '.Versions[].VersionId')
+
+  policy_new=$(echo ${versions} | gum choose --input-delimiter ' ' --header "NEWER version...")
+  policy_old=$(echo ${versions} | gum choose --input-delimiter ' ' --header "OLDER version..." )
+
+  if [[ "${policy_old}" != "${policy_new}" ]]; then
+    log::header "${policy_name} diff ${policy_old}..${policy_new}"
+    tmp_dir=`mktemp -d`
+    pushd ${tmp_dir} >& /dev/null
+
+    aws iam get-policy-version --policy-arn ${policy_arn} --version-id ${policy_new} > ${policy_new}
+    aws iam get-policy-version --policy-arn ${policy_arn} --version-id ${policy_old} > ${policy_old}
+
+    delta ${policy_old} ${policy_new}
+
+    popd >& /dev/null
+    rm ${tmp_dir}
+  fi
 fi
