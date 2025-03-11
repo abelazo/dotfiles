@@ -12,10 +12,12 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?   iam describe-role [--role-name=<role-name>][--policy-name=<policy-name>]
 ##?   iam policy-entities [--policy-name=<policy-name>]
+##?   iam policy-permissions [--policy-name=<policy-name>][--policy-version=<policy_version>]
 ##?
 ##? Options:
-##?   -r, --role-name=<role-name>      Role name
-##?   -p, --policy-name=<policy-name>  Policy name
+##?   -r, --role-name=<role-name>            Role name
+##?   -p, --policy-name=<policy-name>        Policy name
+##?   -v, --policy-version=<policy-version>  Policy version
 ##?
 docs::eval "$@"
 
@@ -38,4 +40,15 @@ if [[ "${policy_entities}" == "true" ]]; then
 
   log::header "Entities attached to ${policy_arn}"
   aws iam list-entities-for-policy --policy-arn ${policy_arn}
+fi
+
+if [[ "${policy_permissions}" == "true" ]]; then
+  [[ "${policy_name}" == "" ]] && policy_name=$(aws iam list-policies | jq -r '.Policies[].PolicyName' | gum filter --header "Policy...")
+
+  policy_arn=$(aws iam list-policies | jq -r '.Policies[] | select(.PolicyName == "'${policy_name}'") | .Arn')
+
+  [[ "${policy_version}" == "" ]] && policy_version=$(aws iam list-policy-versions --policy-arn ${policy_arn} | jq -r '.Versions[].VersionId' | gum choose --header "Policy versions...")
+
+  log::header "Policy (${policy_version}) permissions: ${policy_arn}"
+  aws iam get-policy-version --policy-arn ${policy_arn} --version-id ${policy_version}
 fi
