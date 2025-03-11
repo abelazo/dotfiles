@@ -10,7 +10,8 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   iam describe-role [--role-name=<role-name>][--policy-name=<policy-name>][--output=<output>]
+##?   iam describe-role [--role-name=<role-name>][--policy-name=<policy-name>]
+##?   iam policy-entities [--policy-name=<policy-name>]
 ##?
 ##? Options:
 ##?   -r, --role-name=<role-name>      Role name
@@ -18,9 +19,9 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 docs::eval "$@"
 
-if [ "${describe_role}" == "true" ]; then
+if [[ "${describe_role}" == "true" ]]; then
   [[ "${role_name}" == "" ]] && role_name=$(aws iam list-roles | jq -r '.Roles[].RoleName' | gum filter --header "Role name...")
-  [[ "${policy_name}" == "" ]] && policy_name=$(aws iam list-role-policies --role-name "${role_name}" | jq -r .PolicyNames[] | gum filter --header "Role policy...")
+  [[ "${policy_name}" == "" ]] && policy_name=$(aws iam list-role-policies --role-name "${role_name}" | jq -r '.PolicyNames[]' | gum filter --header "Role policy...")
 
   log::header "${role_name}"
   aws iam get-role --role-name ${role_name} | jq .
@@ -28,4 +29,13 @@ if [ "${describe_role}" == "true" ]; then
   echo "------------------------------------------"
   log::note "==> ${policy_name} <=="
   aws iam get-role-policy --role-name ${role_name} --policy-name ${policy_name} | jq .
+fi
+
+if [[ "${policy_entities}" == "true" ]]; then
+  [[ "${policy_name}" == "" ]] && policy_name=$(aws iam list-policies | jq -r '.Policies[].PolicyName' | gum filter --header "Policy...")
+
+  policy_arn=$(aws iam list-policies | jq -r '.Policies[] | select(.PolicyName == "'${policy_name}'") | .Arn')
+
+  log::header "Entities attached to ${policy_arn}"
+  aws iam list-entities-for-policy --policy-arn ${policy_arn}
 fi
