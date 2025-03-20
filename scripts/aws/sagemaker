@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS logs
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   sagemaker tracking-server [--server-name=<server-name>]
+##?
+##? Options:
+##?   -s, --server-name=<server-name>  Tracking server name
+##?
+docs::eval "$@"
+
+if [ "${tracking_server}" == "true" ]; then
+  [[ "${server_name}" == "" ]] && server_name=$(aws sagemaker list-mlflow-tracking-servers | jq -r '.TrackingServerSummaries[].TrackingServerName' | gum filter --header "Tracking server...")
+
+  log::header "MLflow tracking server: ${server_name}"
+  aws sagemaker describe-mlflow-tracking-server --tracking-server-name ${server_name}
+fi
