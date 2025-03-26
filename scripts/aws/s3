@@ -30,7 +30,7 @@ if [ "${lsb}" == "true" ]; then
 fi
 
 if [ "${ls}" == "true" ]; then
-  [[ "${bucket}" == "" ]] && bucket=$(aws s3api list-buckets | jq -r '.Buckets[].Name' | gum choose --header "Bucket...")
+  [[ "${bucket}" == "" ]] && bucket=$(aws s3api list-buckets | jq -r '.Buckets[].Name' | gum filter --header "Bucket...")
 
   content=$(aws s3api list-objects --bucket ${bucket})
 
