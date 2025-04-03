@@ -26,5 +26,5 @@ function github::get_prs_by_repo {
 function github::get_prs_by_reviewer {
   local author=${1}
   local limit=${2}
-  gh search prs --reviewed-by ${author} --limit ${limit} --state closed --json author,createdAt,closedAt,commentsCount,repository | jq -r '.[] | [.repository.name, .author.login, .commentsCount, .createdAt, .closedAt, ((((.closedAt | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.createdAt | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor)] | @csv'
+  gh search prs --reviewed-by ${author} --limit ${limit} --state closed --json author,createdAt,closedAt,commentsCount,repository,number | jq -r '.[] | [(.repository.name + " (#" + (.number | tostring) + ")"), .author.login, .commentsCount, .createdAt, .closedAt, ((((.closedAt | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.createdAt | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor)] | @csv'
 }
