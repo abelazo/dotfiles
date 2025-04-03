@@ -6,7 +6,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 basepath=$(dirname $0)
 
-format_output() {
+repository_format() {
   local report=${1}
 
   # Header
@@ -24,32 +24,63 @@ format_output() {
   done < ${report}
 }
 
+reviewer_format() {
+  local report=${1}
+  local threshold=24 # TODO: Make threshold configurable
+
+  # Header
+  echo '"Repository","Author","Comments","Created at","Closed at","Diff (h.)"'
+
+  # Body
+  while read -r line; do
+    local string_diff=$(echo "$line" | cut -d ',' -f 6)
+    diff=$(($string_diff))
+    if [[ ${diff} -gt ${threshold} ]]; then
+      echo ${line} | sed "s/,${diff}/,$(gum style --foreground 212 "${string_diff}")/"
+    else
+      echo ${line}
+    fi
+  done < ${report}
+}
+
 ##?
 ##? Pull Requests
 ##?
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   pr list --repository=<repository> [--state=<state>][--pages=<pages>][--threshold=<threshold>]
+##?   pr repo_list --repository=<repository> [--state=<state>][--pages=<pages>][--threshold=<threshold>]
+##?   pr reviewer_list --reviewer=<reviewer> [--threshold=<threshold>]
 ##?
 ##? Arguments:
-##?   list   Get PR information
+##?   repo_list      List repository PR information
+##?   reviewer_list  List PR information for a specific reviewer
 ##?
 ##? Options:
 ##?   -p, --pages=<pages>            Number of pages [default:1]
 ##?   -r, --repository=<repository>  If set, all pages will be retrieved
 ##?   -s, --state=<state>            State of the Pull Request. It can be open, closed, all. [default:open]#
 ##?   -t, --threshold=<threshold>    Threshold in hours to highlight diff. [default:24]
+##?   -w, --reviewer=<reviewer>      Reviewer Github id
 ##?
 docs::eval "$@"
 
 # Set GITHUB_ORGANIZATION variable to search in your specific organization
 organization=${GITHUB_ORGANIZATION:-abelazo}
 
-if [[ "${list}" == "true" ]]; then
+if [[ "${repo_list}" == "true" ]]; then
+  log::header "PRs in $repository"
   report=$(mktemp)
-  gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs ${organization} ${repository} ${state} ${pages}" >> ${report}
-  format_output ${report} | gum table --print
+  gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs_by_repo ${organization} ${repository} ${state} ${pages}" >> ${report}
+  repository_format ${report} | gum table --print
 
+  rm ${report}
+fi
+
+if [[ "${reviewer_list}" == "true" ]]; then
+  log::header "PRs reviewed by $reviewer"
+  report=$(mktemp)
+  gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs_by_reviewer ${reviewer} 50" >> ${report}
+  reviewer_format ${report} | gum table --print
   rm ${report}
 fi

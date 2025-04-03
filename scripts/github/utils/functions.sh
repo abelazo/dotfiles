@@ -10,7 +10,7 @@ function github::wait_for_workflow {
   done
 }
 
-function github::get_prs {
+function github::get_prs_by_repo {
   local organization=${1}
   local repository=${2}
   local state=${3}
@@ -21,4 +21,10 @@ function github::get_prs {
     jq -r '.[] | [.number, (.title | (gsub(",";""))), .state, .created_at, .closed_at, .merged_at, if (.closed_at | length) != 0 then ((((.closed_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.created_at | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor) else null end] | @csv' <<<${prs}
     current_page=$((current_page+1))
   done
+}
+
+function github::get_prs_by_reviewer {
+  local author=${1}
+  local limit=${2}
+  gh search prs --reviewed-by ${author} --limit ${limit} --state closed --json author,createdAt,closedAt,commentsCount,repository | jq -r '.[] | [.repository.name, .author.login, .commentsCount, .createdAt, .closedAt, ((((.closedAt | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime) - (.createdAt | strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)) / 3600) | floor)] | @csv'
 }
