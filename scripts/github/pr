@@ -49,6 +49,7 @@ reviewer_format() {
 #?? 1.0.0
 ##?
 ##? Usage:
+##?   pr list --author=<author> [--state=<state>]
 ##?   pr list --repository=<repository> [--state=<state>][--pages=<pages>][--threshold=<threshold>]
 ##?   pr list --reviewer=<reviewer> [--limit=<limit>]
 ##?
@@ -56,10 +57,11 @@ reviewer_format() {
 ##?   list  List PRs information
 ##?
 ##? Options:
+##?   -a, --author=<author>          PR author
 ##?   -l, --limit=<limit>            Number of PRs to display [default:50]
 ##?   -p, --pages=<pages>            Number of pages [default:1]
 ##?   -r, --repository=<repository>  If set, all pages will be retrieved
-##?   -s, --state=<state>            State of the Pull Request. It can be open, closed, all. [default:open]#
+##?   -s, --state=<state>            State of the Pull Request. It can be open, closed, all. [default:open]
 ##?   -t, --threshold=<threshold>    Threshold in hours to highlight diff. [default:24]
 ##?   -w, --reviewer=<reviewer>      Reviewer Github id
 ##?
@@ -81,5 +83,7 @@ if [[ "${list}" == "true" ]]; then
     gum spin --title "Retrieving pull requests..." -- bash -c "source ${basepath}/utils/functions.sh && github::get_prs_by_reviewer ${reviewer} ${limit}" >> ${report}
     reviewer_format ${report} | gum table --print
     rm ${report}
+  elif [[ -n "${author}" ]]; then
+    gh search prs --author ${author} --state ${state}
   fi
 fi
