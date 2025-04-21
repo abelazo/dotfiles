@@ -80,3 +80,5 @@
 
 [includeIf "gitdir:~/ws/client/"]
     path = ~/ws/client/.config/client.gitconfig
+[git-mob-config]
+    github-fetch = true
