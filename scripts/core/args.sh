@@ -23,6 +23,13 @@ args::verify_jwt_http_auth() {
   fi
 }
 
+args::verify_api_key() {
+  if [ -z $API_KEY ]; then
+    echo "API_KEY environment variable not set" >&2
+    exit 1
+  fi
+}
+
 args::belongs_to() {
   local value="${1}"
   local array="${@:2}"

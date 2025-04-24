@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Octopus Deploy spaces
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   spaces get [--space-name=<space-name>]
+##?
+##? Options:
+##?   -s, --space-name=<space-name>  Space name
+##?
+docs::eval "$@"
+
+if [ -z "$OCTOPUS_INSTANCE" ]; then
+  log::error "OCTOPUS_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_api_key
+
+if [ "${get}" == "true" ]; then
+  if [[ "${space_name}" == "" ]]; then
+    space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces?ApiKey=${API_KEY}" | jq -r '.Items[] | [.Name, .Id] | @csv' | gum table --columns "Name, Id" | cut -d ',' -f 2)
+  else
+    space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces?ApiKey=${API_KEY}" | jq -r '.Items[] | select(.Name == "'${space_name}'") | .Id')
+  fi
+
+  http --print b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}?ApiKey=${API_KEY}" | jq .
+fi
