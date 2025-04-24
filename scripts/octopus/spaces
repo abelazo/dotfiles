@@ -3,6 +3,8 @@
 set -euo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
+basepath=$(dirname $0)
+source "${basepath}/utils/spaces.sh"
 
 ##?
 ##? Octopus Deploy spaces
@@ -25,11 +27,7 @@ fi
 args::verify_api_key
 
 if [ "${get}" == "true" ]; then
-  if [[ "${space_name}" == "" ]]; then
-    space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces?ApiKey=${API_KEY}" | jq -r '.Items[] | [.Name, .Id] | @csv' | gum table --columns "Name, Id" | cut -d ',' -f 2)
-  else
-    space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces?ApiKey=${API_KEY}" | jq -r '.Items[] | select(.Name == "'${space_name}'") | .Id')
-  fi
+  space_id=$(octopus::get_space "${space_name}")
 
   http --print b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}?ApiKey=${API_KEY}" | jq .
 fi
