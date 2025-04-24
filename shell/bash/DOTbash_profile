@@ -40,7 +40,6 @@ done
 
 # direnv (after all commands manipulating the prompt)
 eval "$(direnv hook bash)"
-export DIRENV_LOG_FORMAT=
 
 # Rust - Load Cargo environment if exist
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
