@@ -29,5 +29,7 @@ args::verify_api_key
 if [ "${get}" == "true" ]; then
   space_id=$(octopus::get_space "${space_name}")
 
-  http --print b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}?ApiKey=${API_KEY}" | jq .
+  http --print HBhb GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}" \
+       ApiKey==${API_KEY} \
+    | jq .
 fi
