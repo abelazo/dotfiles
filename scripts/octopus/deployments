@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+basepath=$(dirname $0)
+source "${basepath}/utils/ids.sh"
+
+##?
+##? Octopus Deploy deployments
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   deployments create [--environment=<environment>][--release=<release>][--space-name=<space-name>]
+##?
+##? Options:
+##?   -e, --environment=<environment>  Environment
+##?   -r, --release=<release>          Release
+##?   -s, --space-name=<space-name>    Space name
+##?
+docs::eval "$@"
+
+if [ -z "$OCTOPUS_INSTANCE" ]; then
+  log::error "OCTOPUS_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_api_key
+
+if [ "${create}" == "true" ]; then
+  space_id=$(octopus::get_space_id "${space_name}")
+  release_id=$(octopus::get_release_id "${space_name}" "${release}")
+  environment_id=$(octopus::get_environment_id "${space_name}" "${environment}")
+
+  http POST "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/deployments" \
+       ApiKey==${API_KEY} \
+       EnvironmentId=${environment_id} \
+       ReleaseId=${release_id} \
+    | jq .
+fi
