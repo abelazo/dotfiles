@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-octopus::get_space() {
+octopus::get_space_id() {
   space_name=$1
   if [[ "${space_name}" == "" ]]; then
     space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | gum table --columns "Name, Id" | cut -d ',' -f 2)
@@ -8,4 +8,14 @@ octopus::get_space() {
     space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${space_name}'") | .Id')
   fi
   echo ${space_id}
+}
+
+octopus::get_space_slug() {
+  space_name=$1
+  if [[ "${space_name}" == "" ]]; then
+    space_slug=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | .Slug' | gum choose)
+  else
+    space_slug=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${space_name}'") | .Slug')
+  fi
+  echo ${space_slug}
 }

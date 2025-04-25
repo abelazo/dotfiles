@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 basepath=$(dirname $0)
-source "${basepath}/utils/spaces.sh"
+source "${basepath}/utils/ids.sh"
 
 ##?
 ##? Octopus Deploy spaces
@@ -27,9 +27,9 @@ fi
 args::verify_api_key
 
 if [ "${get}" == "true" ]; then
-  space_id=$(octopus::get_space "${space_name}")
+  space_id=$(octopus::get_space_id "${space_name}")
 
-  http --print HBhb GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}" \
+  http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}" \
        ApiKey==${API_KEY} \
     | jq .
 fi
