@@ -46,10 +46,10 @@ if [[ "${run}" == "true" ]]; then
     workflow_inputs+=" --raw-field ${i}"
   done
 
-  workflow_branch=""
-  [[ "${branch}" != "" ]] && workflow_branch="--ref ${branch}"
+  workflow_branch_option=""
+  [[ "${branch}" != "" ]] && workflow_branch_option="--ref ${branch}"
 
-  gh workflow run ${workflow} ${workflow_inputs} ${workflow_branch}
+  gh workflow run ${workflow} ${workflow_inputs} ${workflow_branch_option}
 
   gum spin --title "Waiting for workflow ${workflow}..." -- bash -c "source ${basepath}/utils/functions.sh && github::wait_for_workflow ${workflow}"
 
