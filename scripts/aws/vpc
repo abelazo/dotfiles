@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Describe VPC attributes
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   vpc subnets
+##?
+docs::eval "$@"
+
+if [ "${subnets}" == "true" ]; then
+  aws ec2 describe-subnets | jq -r '.Subnets[] | [.CidrBlock, (.Tags[] | select(.Key == "Name").Value)] | @csv' | sort -t ',' -k 2 | gum table --print --columns "CIDR, Name"
+fi
