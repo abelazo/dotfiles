@@ -70,6 +70,10 @@
 
 [rebase]
     autoStash = true
+    updateRefs = true
+
+[rerere]
+    enabled = true
 
 ; Project includes
 [includeIf "gitdir:~/ws/personal/"]
