@@ -33,9 +33,13 @@ if [ "${create}" == "true" ]; then
   release_id=$(octopus::get_release_id "${space_name}" "${release}")
   environment_id=$(octopus::get_environment_id "${space_name}" "${environment}")
 
-  http POST "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/deployments" \
-       ApiKey==${API_KEY} \
-       EnvironmentId=${environment_id} \
-       ReleaseId=${release_id} \
-    | jq .
+  if [[ -n ${release_id} ]]; then
+    http POST "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/deployments" \
+         ApiKey==${API_KEY} \
+         EnvironmentId=${environment_id} \
+         ReleaseId=${release_id} \
+      | jq .
+  else
+    exit -1
+  fi
 fi
