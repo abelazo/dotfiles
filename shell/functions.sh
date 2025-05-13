@@ -68,8 +68,10 @@ function awp() {
       fi
       aws_account_id=$(aws sts get-caller-identity --query "Account" --output text 2> /dev/null)
     fi
-    echo "\"${AWS_PROFILE}\",\"${aws_account_id}\"" | gum table --print --columns "Profile,Account"
-    if [[ "${1}" == "-d" ]]; then
+    PROFILE=$(gum style --foreground 4 "${AWS_PROFILE}")
+    ACCOUNT=$(gum style --padding "0 1" --foreground 2 "(${aws_account_id})")
+    gum join --horizontal "${PROFILE}" "${ACCOUNT}"
+    if [[ "${1}" == "--debug" ]]; then
       aws configure list
     fi
   else
@@ -80,6 +82,8 @@ function awp() {
 function awi() {
   if [[ -n "$AWS_PROFILE" ]]; then
     aws_account_id=$(aws sts get-caller-identity --query "Account" --output text 2> /dev/null)
-    echo "\"${AWS_PROFILE}\",\"${aws_account_id}\"" | gum table --print --columns "Profile,Account"
+    PROFILE=$(gum style --foreground 4 "${AWS_PROFILE}")
+    ACCOUNT=$(gum style --padding "0 1" --foreground 2 "(${aws_account_id})")
+    gum join --horizontal "${PROFILE}" "${ACCOUNT}"
   fi
 }
