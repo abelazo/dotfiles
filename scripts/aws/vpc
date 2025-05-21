@@ -10,10 +10,23 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   vpc subnets
+##?   vpc subnets [--filter=<filter>][--output=<output>]
+##?
+##? Options:
+##?   -f, --filter=<filter>  Word to be contained in the subnet name
+##?   -o, --output=<output>  Output format (table, json)[default: table]
 ##?
 docs::eval "$@"
 
 if [ "${subnets}" == "true" ]; then
-  aws ec2 describe-subnets | jq -r '.Subnets[] | [.CidrBlock, (.Tags[] | select(.Key == "Name").Value)] | @csv' | sort -t ',' -k 2 | gum table --print --columns "CIDR, Name"
+  subnets=$(aws ec2 describe-subnets)
+
+  filtered_subnets=${subnets}
+  [[ "${filter}" != "" ]] && filtered_subnets=$(jq -r --arg FILTER "${filter}" '[.Subnets[] | select((.Tags[] | select(.Key == "Name").Value) | contains($FILTER))]' <<<${subnets})
+
+  if [ "${output}" == "json" ]; then
+    jq -r '[.[] | {"cidr": .CidrBlock, "name": (.Tags[] | select(.Key == "Name").Value)}]' <<<${filtered_subnets}
+  else
+    jq -r '.[] | [.CidrBlock, (.Tags[] | select(.Key == "Name").Value)] | @csv' <<<${filtered_subnets} | sort -t ',' -k 2 | gum table --print --columns "CIDR, Name"
+  fi
 fi
