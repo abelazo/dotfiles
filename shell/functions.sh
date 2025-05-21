@@ -54,7 +54,7 @@ function awp() {
   profiles=(${output})
 
   height=$((${#profiles[@]} + 4)) # 4 = Fitler headers & footers
-  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum filter --select-if-one --limit=1 --height=${height} --header "AWS profiles (${#profiles[@]})")
+  selected_profile=$(echo ${profiles[@]} | tr ' ' '\n' | gum filter --select-if-one --limit=1 --height=${height} --header "AWS profiles (${#profiles[@]})" --value "${1}")
 
   [[ -z "${selected_profile}" ]] && return 1 || export AWS_PROFILE=${selected_profile}
 
@@ -71,9 +71,6 @@ function awp() {
     PROFILE=$(gum style --foreground 4 "${AWS_PROFILE}")
     ACCOUNT=$(gum style --padding "0 1" --foreground 2 "(${aws_account_id})")
     gum join --horizontal "${PROFILE}" "${ACCOUNT}"
-    if [[ "${1}" == "--debug" ]]; then
-      aws configure list
-    fi
   else
     exit ${?}
   fi
