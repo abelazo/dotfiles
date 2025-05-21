@@ -47,6 +47,9 @@
     prune = true
     prune-tags = true
 
+[git-mob-config]
+    github-fetch = true
+
 [init]
     defaultBranch = main
 
@@ -84,5 +87,3 @@
 
 [includeIf "gitdir:~/ws/client/"]
     path = ~/ws/client/.config/client.gitconfig
-[git-mob-config]
-    github-fetch = true
