@@ -24,7 +24,7 @@ octopus::get_release_id() {
   space_id=$1
   release_version=$2
   if [[ "${release_version}" == "" ]]; then
-    all_channels=$(http --print b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/channels" ApiKey==${API_KEY})
+    all_channels=$(http --print b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/channels" ApiKey==${API_KEY} take==1000) # TODO: Implement pagination
     all_projects=$(http --print b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects" ApiKey==${API_KEY})
     all_releases=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/releases" ApiKey==${API_KEY})
 
