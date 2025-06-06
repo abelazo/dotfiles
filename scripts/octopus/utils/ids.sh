@@ -58,7 +58,7 @@ octopus::get_project_id() {
   if [[ "${project_name}" == "" ]]; then
     project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | sort | gum table --columns "Name,ID" --return-column 2)
   else
-    project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${project_name}'") | .Id')
+    project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'"${project_name}"'") | .Id')
   fi
   echo ${project_id}
 }
