@@ -3,7 +3,7 @@
 octopus::get_space_id() {
   space_name=$1
   if [[ "${space_name}" == "" ]]; then
-    space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | gum table --columns "Name,ID" --return-column 2)
+    space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | sort | gum table --columns "Name,ID" --return-column 2)
   else
     space_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${space_name}'") | .Id')
   fi
@@ -45,7 +45,7 @@ octopus::get_environment_id() {
   space_id=$1
   environment_name=$2
   if [[ "${environment_name}" == "" ]]; then
-    environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | gum table --columns "Name,ID" --return-column 2)
+    environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | sort | gum table --columns "Name,ID" --return-column 2)
   else
     environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${environment_name}'") | .Id')
   fi
@@ -56,9 +56,9 @@ octopus::get_project_id() {
   space_id=$1
   project_name=$2
   if [[ "${project_name}" == "" ]]; then
-    project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | gum table --columns "Name,ID" --return-column 2)
+    project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | sort | gum table --columns "Name,ID" --return-column 2)
   else
-    project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${project_name}'") | .Id')
+    project_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${project_name}'") | .Id')
   fi
   echo ${project_id}
 }
