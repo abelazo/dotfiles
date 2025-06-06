@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+basepath=$(dirname $0)
+source "${basepath}/utils/ids.sh"
+
+##?
+##? Octopus Deploy projects
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   projects get [--space-name=<space-name>]
+##?
+##? Options:
+##?   -s, --space-name=<space-name>  Space name
+##?
+docs::eval "$@"
+
+if [ -z "$OCTOPUS_INSTANCE" ]; then
+  log::error "OCTOPUS_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_api_key
+
+if [ "${get}" == "true" ]; then
+  space_id=$(octopus::get_space_id "${space_name}")
+
+  http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects" \
+       ApiKey==${API_KEY} \
+    | jq -r '.Items[] | [.Id, .Name] | @csv' | gum table --print --columns "ID,Name"
+fi
