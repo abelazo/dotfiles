@@ -45,9 +45,9 @@ octopus::get_environment_id() {
   space_id=$1
   environment_name=$2
   if [[ "${environment_name}" == "" ]]; then
-    environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | sort | gum table --columns "Name,ID" --return-column 2)
+    environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | [.Name, .Id] | @csv' | sort | gum table --columns "Name,ID" --return-column 2)
   else
-    environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${environment_name}'") | .Id')
+    environment_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments?take=1000" ApiKey==${API_KEY} | jq -r '.Items[] | select(.Name == "'${environment_name}'") | .Id')
   fi
   echo ${environment_id}
 }
