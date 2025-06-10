@@ -29,6 +29,7 @@ args::verify_api_key
 if [ "${get}" == "true" ]; then
   space_id=$(octopus::get_space_id "${space_name}")
 
+  log::header "Projects in '${space_id}'"
   http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects" \
        ApiKey==${API_KEY} \
     | jq -r '.Items[] | [.Id, .Name] | @csv' | gum table --print --columns "ID,Name"
