@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+basepath=$(dirname $0)
+source "${basepath}/utils/ids.sh"
+
+##?
+##? Octopus Deploy packages
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   packages get [--space-name=<space-name>]
+##?   packages delete [--space-name=<space-name>][--package-id=<package-id>]
+##?
+##? Options:
+##?   -p, --package-id=<package-id>  Package ID
+##?   -s, --space-name=<space-name>  Space name
+##?
+docs::eval "$@"
+
+if [ -z "$OCTOPUS_INSTANCE" ]; then
+  log::error "OCTOPUS_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_api_key
+
+if [ "${get}" == "true" ]; then
+  space_id=$(octopus::get_space_id "${space_name}")
+
+  http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages" \
+       ApiKey==${API_KEY} \
+    | jq -r '.Items[] | [.PackageId, .Version] | @csv' | gum table --print --columns "ID,Highest version"
+fi
+
+if [ "${delete}" == "true" ]; then
+  space_id=$(octopus::get_space_id "${space_name}")
+
+  package_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages" \
+                    ApiKey==${API_KEY} \
+                 | jq -r '.Items[].Id' | gum filter --select-if-one --header "Octopus package...")
+
+  log::header "${package_id}"
+  http --print=b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages/${package_id}" \
+       ApiKey==${API_KEY}
+
+  gum confirm "Are you sure you want to delete this Octopus package?" && \
+    http DELETE "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages/${package_id}" \
+         ApiKey==${API_KEY}
+fi
