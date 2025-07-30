@@ -691,6 +691,8 @@
 			<string>Yes</string>
 			<key>Custom Icon Path</key>
 			<string>/Volumes/GoogleDrive/My Drive/Graphic material/Icons/TW.png</string>
+			<key>Custom Locale</key>
+			<string>en_US.UTF-8</string>
 			<key>Custom Window Title</key>
 			<string>abelazo's shell</string>
 			<key>Default Bookmark</key>
@@ -1246,6 +1248,8 @@
 			</dict>
 			<key>Send Code When Idle</key>
 			<false/>
+			<key>Set Local Environment Vars</key>
+			<integer>2</integer>
 			<key>Shortcut</key>
 			<string>0</string>
 			<key>Show Status Bar</key>
@@ -1862,6 +1866,8 @@
 			<string>Advanced</string>
 			<key>Custom Icon Path</key>
 			<string>/Volumes/GoogleDrive/My Drive/TW Projects/2021.Tesco - Sales Tax API/Graphical/logos/tesco_logo_small.png</string>
+			<key>Custom Locale</key>
+			<string>en_US.UTF-8</string>
 			<key>Custom Window Title</key>
 			<string>abelazo's shell</string>
 			<key>Default Bookmark</key>
@@ -2419,6 +2425,8 @@
 			</dict>
 			<key>Send Code When Idle</key>
 			<false/>
+			<key>Set Local Environment Vars</key>
+			<integer>2</integer>
 			<key>Shortcut</key>
 			<string>2</string>
 			<key>Show Status Bar</key>
@@ -3038,6 +3046,8 @@
 			<string>Advanced</string>
 			<key>Custom Icon Path</key>
 			<string>/Volumes/GoogleDrive/My Drive/TW Projects/2021.Tesco - Sales Tax API/Graphical/logos/tesco_logo_small.png</string>
+			<key>Custom Locale</key>
+			<string>en_US.UTF-8</string>
 			<key>Custom Window Title</key>
 			<string>abelazo's shell</string>
 			<key>Default Bookmark</key>
@@ -3595,6 +3605,8 @@
 			</dict>
 			<key>Send Code When Idle</key>
 			<false/>
+			<key>Set Local Environment Vars</key>
+			<integer>2</integer>
 			<key>Shortcut</key>
 			<string>1</string>
 			<key>Show Status Bar</key>
