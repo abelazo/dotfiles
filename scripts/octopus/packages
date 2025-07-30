@@ -12,7 +12,7 @@ source "${basepath}/utils/ids.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   packages get [--space-name=<space-name>]
+##?   packages list [--space-name=<space-name>]
 ##?   packages delete [--space-name=<space-name>][--package-id=<package-id>]
 ##?
 ##? Options:
@@ -28,10 +28,10 @@ fi
 
 args::verify_api_key
 
-if [ "${get}" == "true" ]; then
+if [ "${list}" == "true" ]; then
   space_id=$(octopus::get_space_id "${space_name}")
 
-  http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages" \
+  http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages?take=500" \
        ApiKey==${API_KEY} \
     | jq -r '.Items[] | [.PackageId, .Version] | @csv' | gum table --print --columns "ID,Highest version"
 fi
