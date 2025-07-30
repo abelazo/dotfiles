@@ -39,13 +39,11 @@ fi
 if [[ "${delete}" == "true" ]]; then
   space_id=$(octopus::get_space_id "${space_name}")
 
-  set -x
   if [[ "${package_id}" == "" ]]; then
      package_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages" \
                        ApiKey==${API_KEY} \
                     | jq -r '.Items[].Id' | gum filter --select-if-one --header "Octopus package...")
   fi
-  set +x
 
   log::header "${package_id}"
   http --print=b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages/${package_id}" \
