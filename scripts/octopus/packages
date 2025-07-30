@@ -21,14 +21,14 @@ source "${basepath}/utils/ids.sh"
 ##?
 docs::eval "$@"
 
-if [ -z "$OCTOPUS_INSTANCE" ]; then
+if [[ -z "$OCTOPUS_INSTANCE" ]]; then
   log::error "OCTOPUS_INSTANCE environment variable not set"
   exit 1
 fi
 
 args::verify_api_key
 
-if [ "${list}" == "true" ]; then
+if [[ "${list}" == "true" ]]; then
   space_id=$(octopus::get_space_id "${space_name}")
 
   http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages?take=500" \
@@ -36,12 +36,16 @@ if [ "${list}" == "true" ]; then
     | jq -r '.Items[] | [.PackageId, .Version] | @csv' | gum table --print --columns "ID,Highest version"
 fi
 
-if [ "${delete}" == "true" ]; then
+if [[ "${delete}" == "true" ]]; then
   space_id=$(octopus::get_space_id "${space_name}")
 
-  package_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages" \
-                    ApiKey==${API_KEY} \
-                 | jq -r '.Items[].Id' | gum filter --select-if-one --header "Octopus package...")
+  set -x
+  if [[ "${package_id}" == "" ]]; then
+     package_id=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages" \
+                       ApiKey==${API_KEY} \
+                    | jq -r '.Items[].Id' | gum filter --select-if-one --header "Octopus package...")
+  fi
+  set +x
 
   log::header "${package_id}"
   http --print=b GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/packages/${package_id}" \
