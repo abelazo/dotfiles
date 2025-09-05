@@ -38,14 +38,22 @@ if [ "${get}" == "true" ]; then
 
   if [[ -n ${project_id} ]]; then
     log::header "Variables in '${space_id}' (${project_id})"
+    all_environments=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/environments" ApiKey==${API_KEY} take==1000 | jq 'INDEX(.Items[]; .Id)')
+
     if [[ "${persistence}" == "VersionControlled" ]]; then
       http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}/main/variables" \
            ApiKey==${API_KEY} \
-        | jq -r '.Variables[] | [.Name, .Value] | @csv' | gum table --print --columns "Name,Value"
+        | jq --argjson envmap "$all_environments" -r '
+            .Variables[] | [.Name, .Value, (.Scope.Environment // [] | flatten | map($envmap[.].Name // .) | join(","))] | @csv
+            ' \
+        | gum table --print --columns "Name,Value,Environment"
     else
       http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}/variables" \
            ApiKey==${API_KEY} \
-        | jq -r '.Variables[] | [.Name, .Value] | @csv' | gum table --print --columns "Name,Value"
+        | jq --argjson envmap "$all_environments" -r '
+            .Variables[] | [.Name, .Value, (.Scope.Environment // [] | flatten | map($envmap[.].Name // .) | join(","))] | @csv
+        ' \
+        | gum table --print --columns "Name,Value,Environment"
     fi
   else
     exit -1
