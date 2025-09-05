@@ -29,18 +29,25 @@ args::verify_api_key
 
 if [ "${get}" == "true" ]; then
   space_id=$(octopus::get_space_id "${space_name}")
+  if [[ -z ${space_id} ]]; then
+    exit -1
+  fi
   project_id=$(octopus::get_project_id "${space_id}" "${project_name}")
 
   persistence=$(http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}" ApiKey==${API_KEY} | jq -r .PersistenceSettings.Type)
 
-  log::header "Variables in '${space_id}' (${project_id})"
-  if [[ "${persistence}" == "VersionControlled" ]]; then
-    http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}/main/variables" \
-         ApiKey==${API_KEY} \
-      | jq -r '.Variables[] | [.Name, .Value] | @csv' | gum table --print --columns "Name,Value"
+  if [[ -n ${project_id} ]]; then
+    log::header "Variables in '${space_id}' (${project_id})"
+    if [[ "${persistence}" == "VersionControlled" ]]; then
+      http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}/main/variables" \
+           ApiKey==${API_KEY} \
+        | jq -r '.Variables[] | [.Name, .Value] | @csv' | gum table --print --columns "Name,Value"
+    else
+      http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}/variables" \
+           ApiKey==${API_KEY} \
+        | jq -r '.Variables[] | [.Name, .Value] | @csv' | gum table --print --columns "Name,Value"
+    fi
   else
-    http GET "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/projects/${project_id}/variables" \
-         ApiKey==${API_KEY} \
-      | jq -r '.Variables[] | [.Name, .Value] | @csv' | gum table --print --columns "Name,Value"
+    exit -1
   fi
 fi
