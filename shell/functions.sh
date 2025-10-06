@@ -10,7 +10,7 @@ function ediff() {
 export -f ediff
 
 function ttd() {
-  if [ "${1}" == "-h" ]; then
+  if [[ "${1}" == "-h" ]] || [[ "${1}" == "--help" ]]; then
     echo "ttd <timestamp> [secs]"
     return
   fi
