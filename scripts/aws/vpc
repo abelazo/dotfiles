@@ -21,7 +21,7 @@ docs::eval "$@"
 if [ "${subnets}" == "true" ]; then
   subnets=$(aws ec2 describe-subnets)
 
-  filtered_subnets=${subnets}
+  filtered_subnets=$(jq '.Subnets' <<<${subnets})
   [[ "${filter}" != "" ]] && filtered_subnets=$(jq -r --arg FILTER "${filter}" '[.Subnets[] | select((.Tags[] | select(.Key == "Name").Value) | contains($FILTER))]' <<<${subnets})
 
   if [ "${output}" == "json" ]; then
