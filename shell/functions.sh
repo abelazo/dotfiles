@@ -84,3 +84,9 @@ function awi() {
     gum join --horizontal "${PROFILE}" "${ACCOUNT}"
   fi
 }
+
+function awq() {
+  if [[ -n "${1}" ]]; then
+     grep --before=5 "${1}" "${AWS_CONFIG_FILE}" | grep profile | cut -d ' ' -f 2 | cut -d ']' -f 1
+  fi
+}
