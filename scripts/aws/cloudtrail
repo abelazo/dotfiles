@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Get AWS cloudtrail events
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   cloudtrail --attribute-name=<resource-name> --attribute-value=<resource-value> [--start-time=<start-time> --end-time=<end-time>][--output=<output>]
+##?
+##? Options:
+##?   -n, --attribute-name=<resource-name>    Attribute name (https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events-cli.html#view-cloudtrail-events-cli-output-fields)
+##?   -v, --attribute-value=<resource-value>  Attribute value
+##?   -s, --start-time=<start-time>           Start datetime
+##?   -e, --end-time=<end-time>               End datetime
+##?   -o, --output=<output>                   Output type (short, full) [default:short]
+##?
+docs::eval "$@"
+
+[[ "${start_time}" == "" ]] && start_time=$(gdate --date '1 hour ago' --iso-8601=seconds)
+[[ "${end_time}" == "" ]] && end_time=$(gdate --iso-8601=seconds)
+
+events=$(aws cloudtrail lookup-events \
+    --lookup-attributes AttributeKey="${attribute_name}",AttributeValue="${attribute_value}" \
+    --start-time "${start_time}" --end-time "${end_time}")
+
+if [[ "${output}" == "short" ]]; then
+  jq -r '[.Events[] | { "time": .EventTime, "event": .EventName, "user": .Username }]' <<<${events}
+else
+  jq -r '.' <<<${events}
+fi
