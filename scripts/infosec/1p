@@ -5,22 +5,26 @@ set -euo pipefail
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
 ##? Get password from 1password
-#?? 2.0.0
+#?? 3.0.0
 ##?
 ##? Usage:
-##?   1p list [<vault>]
+##?   1p list
 ##?   1p pwd <item> [--stdout]
 ##?   1p otp <item> [--stdout]
 ##?   1p gpg <key_id> [--stdout]
+##?   1p describe <item>
+##?   1p read --vault=<vault> --secret=<secret> --section=<section> --field=<field> [--stdout]
+##?
+##? Options:
+##?   -f, --field=<field>      Secret field
+##?   -s, --secret=<secret>    Secret name
+##?   -t, --section=<section>  Secret section
+##?   -v, --vault=<vault>      Vault where the secret is stored
 ##?
 docs::eval "$@"
 
 if [ "${list}" == "true" ]; then
-  if [[ -n "$vault" ]]; then
-    op item list --format=json | jq -r '["Item","Vault"], ["----", "-----"], (.[] | select(.vault.name == "'${vault}'") | [.title, .vault.name]) | @tsv' | column -ts $'\t'
-  else
-    op item list --format=json | jq -r '["Item","Vault"], ["----", "-----"], (.[] | [.title, .vault.name]) | @tsv' | column -ts $'\t'
-  fi
+  op item list --format=json | jq -r '["Item","Vault"], ["----", "-----"], (.[] | [.title, .vault.name]) | @tsv' | column -ts $'\t'
   exit 0
 fi
 
@@ -33,8 +37,12 @@ elif [ "${gpg}" = "true" ]; then
   [[ $(echo ${gpgKeyId} | wc -c) -gt 27 ]] && log::error "Could not find a UNIQUE GPG key identified by ${item}" && exit 2
 
   result=$(op item get "${gpgKeyId}" --fields label=password --format json | jq -r .value)
-else
+elif [ "${pwd}" = "true" ]; then
   result=$(op item get "${item}" --fields label=password --format json | jq -r .value)
+elif [ "${describe}" = "true" ]; then
+  op item get "${item}"
+elif [ "${read}" = "true" ]; then
+  result=$(op read "op://${vault}/${secret}/${section}/${field}")
 fi
 
 if [ "${stdout}" = "true" ]; then
