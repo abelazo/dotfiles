@@ -11,9 +11,10 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   vpc subnets [--filter=<filter>][--output=<output>]
+##?   vpc prefix-list [--filter=<filter>][--output=<output>]
 ##?
 ##? Options:
-##?   -f, --filter=<filter>  Word to be contained in the subnet name
+##?   -f, --filter=<filter>  Word to be contained in the filter (subnet, prefix-list)
 ##?   -o, --output=<output>  Output format (table, json)[default: table]
 ##?
 docs::eval "$@"
@@ -28,5 +29,15 @@ if [ "${subnets}" == "true" ]; then
     jq -r '[.[] | {"cidr": .CidrBlock, "name": (.Tags[] | select(.Key == "Name").Value)}]' <<<${filtered_subnets}
   else
     jq -r '.[] | [.CidrBlock, (.Tags[] | select(.Key == "Name").Value)] | @csv' <<<${filtered_subnets} | sort -t ',' -k 2 | gum table --print --columns "CIDR, Name"
+  fi
+fi
+
+if [ "${prefix_list}" == "true" ]; then
+  pl=$(aws ec2 describe-managed-prefix-lists)
+
+  if [ "${output}" == "json" ]; then
+    jq -r '.PrefixLists' <<<${pl}
+  else
+    jq -r '.PrefixLists | sort_by(.PrefixListName)[] | select(.PrefixListName | contains("'${filter}'")) | [.PrefixListId, .PrefixListName] | @csv' <<<${pl} | gum table --print --columns "ID,Name"
   fi
 fi
