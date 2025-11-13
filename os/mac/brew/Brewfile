@@ -2,7 +2,6 @@
 # Taps
 tap "beeftornado/rmtree"
 tap "denisidoro/tools"
-tap "homebrew/bundle"
 tap "remotemobprogramming/brew"
 #
 # brew formulae
