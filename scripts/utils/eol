@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Software end of life
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   eol [--product=<product>][--output=<output>]
+##?
+##? Options:
+##?   -p, --product=<product>  Product
+##?   -o, --output=<output>    Output format (json or text) [default:text]
+##?
+docs::eval "$@"
+
+if [[ "${product}" == "" ]]; then
+  products=$(http https://endoflife.date/api/all.json)
+  product=$(jq -r '.[]' <<<${products} | gum filter --header "Products...")
+fi
+
+cycles=$(http https://endoflife.date/api/${product}.json)
+if [[ "${output}" == "text" ]]; then
+  cycles_file=$(mktemp)
+  echo ${cycles} > ${cycles_file}
+  jq -c '.[]' ${cycles_file} | while read -r row; do
+    # Extract EOL value
+    eol_string=$(echo "$row" | jq -r '.eol')
+
+    # Transform if date is in the past
+    styled=$eol_string # Default: no transformation
+    if gdate -d "${eol_string}" >/dev/null 2>&1; then # Valid date
+      now=$(gdate +%s)
+      eol_date=$(gdate -d "${eol_string}" +%s)
+      if [[ "${now}" -gt "${eol_date}" ]]; then
+        styled=$(gum style --foreground 212 "$eol_string")
+      fi
+    fi
+
+    # Replace EOL with styled version and output
+    echo "$row" | jq --arg eol "$styled" '.eol=$eol'
+  done | jq -rs '(.[0] | to_entries | map(.key)) as $keys | $keys, (.[] | [.[ $keys[] ]]) | @csv' | gum table --print
+
+  rm ${cycles_file}
+else
+  jq . <<<${cycles}
+fi
