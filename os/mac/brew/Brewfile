@@ -6,6 +6,7 @@ tap "remotemobprogramming/brew"
 #
 # brew formulae
 #
+brew "awscli-local"
 brew "bash"
 brew "bash-completion"
 brew "bash-git-prompt"
@@ -27,6 +28,7 @@ brew "httpie"
 brew "ispell"
 brew "jc"
 brew "jq"
+brew "localstack"
 brew "mob"
 brew "nvm"
 brew "openssh"
