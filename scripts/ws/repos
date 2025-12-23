@@ -30,13 +30,39 @@ else
   [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
 fi
 
-
 [[ "${branches}" == "true" ]] && action="Getting local branches"
 [[ "${pull}" == "true" ]] && action="Pulling repositories"
 [[ "${pre-commit}" == "true" ]] && action="Installing pre-commit"
 log::header "${action} in ${work_dir}"
 
-for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.terragrunt-cache" \) -o -path "*/.cache" \) -prune -o -name .git -print`; do
+skip_dirs=(
+  .terraform
+  .terragrunt-cache
+  .cache
+  node_modules
+)
+
+# Build the prune expression: \( -path "*/dir1" -o -path "*/dir2" ... \)
+prune_group=()
+for d in "${skip_dirs[@]}"; do
+  prune_group+=( -path "*/$d" -o )
+done
+# Drop trailing -o if present
+if ((${#prune_group[@]})); then
+  unset 'prune_group[${#prune_group[@]}-1]'
+fi
+
+# Build the find command as an array (works even if skip list is empty)
+cmd=(find . -type d)
+if ((${#prune_group[@]})); then
+  cmd+=( \( "${prune_group[@]}" \) -prune -o )
+fi
+cmd+=( -name .git -print0 )
+
+set -x
+# Iterate over results safely
+while IFS= read -r -d '' gitdir; do
+  set +x
   pushd $(dirname $gitdir) >& /dev/null
   if [[ "${branches}" == "true" ]]; then
     repo=$(basename $(dirname $gitdir))
@@ -66,4 +92,4 @@ for gitdir in `find ${work_dir} -type d \( \( -path "*/.terraform" -o -path "*/.
     fi
   fi
   popd >& /dev/null
-done
+done < <("${cmd[@]}")
