@@ -42,6 +42,10 @@ alias fgrep='fgrep --color=auto'
 # alias gl="dot git pretty-log"
 
 # Docker
+alias di='docker image'
+alias dc='docker container'
+alias ds='docker system'
+alias df='docker volume'
 alias dc_stopall='docker container stop $(docker container ls -a -q)'
 alias dc_rmall='docker container rm $(docker container ls -a -q)'
 alias di_rmall='docker image rm $(docker image ls -a -q)'
