@@ -59,10 +59,8 @@ if ((${#prune_group[@]})); then
 fi
 cmd+=( -name .git -print0 )
 
-set -x
 # Iterate over results safely
 while IFS= read -r -d '' gitdir; do
-  set +x
   pushd $(dirname $gitdir) >& /dev/null
   if [[ "${branches}" == "true" ]]; then
     repo=$(basename $(dirname $gitdir))
