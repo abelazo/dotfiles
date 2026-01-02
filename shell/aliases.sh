@@ -13,6 +13,7 @@ alias mkdir='mkdir -pv'
 
 # Routes
 alias tmp='pushd $WS/tmp'
+alias dirs='dirs -v'
 
 # Safety nets
 # do not delete / or prompt if deleting more than 3 files at a time
