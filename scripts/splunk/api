@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Splunk Observability (Signal FX) REST API request
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   api <endpoint> [--verbose]
+##?
+##? Options:
+##?   -v, --verbose  Verbose output
+##?
+docs::eval "$@"
+
+# Set SPLUNK_OBSERVABILITY_REALM variable to search in your specific realm
+if [ -z "$SFX_REALM" ]; then
+  log::error "SFX_REALM environment variable not set"
+  exit 1
+fi
+
+if [ -z "$SFX_AUTH_TOKEN" ]; then
+  log::error "SFX_AUTH_TOKEN environment variable not set"
+  exit 1
+fi
+
+options="--print b"
+[[ "$verbose" == "true" ]] && options="--print HBhb"
+
+http ${options} \
+     GET "https://api.${SFX_REALM}.signalfx.com/v2/${endpoint}" \
+     Content-Type:application/json \
+     X-SF-TOKEN:$SFX_AUTH_TOKEN
