@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
@@ -10,10 +10,11 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   api <endpoint> [--verbose]
+##?   api <endpoint> [--verb=<verb>][--verbose]
 ##?
 ##? Options:
-##?   -v, --verbose  Verbose output
+##?   -e, --verb=<verb>  REST verb [default:GET]
+##?   -v, --verbose      Verbose output
 ##?
 docs::eval "$@"
 
@@ -28,10 +29,16 @@ if [ -z "$SFX_AUTH_TOKEN" ]; then
   exit 1
 fi
 
+prefix="/"
+if [[ $endpoint != $prefix* ]]; then
+  log::error "'$endpoint' does not start with '/'"
+  exit 2
+fi
+
 options="--print b"
 [[ "$verbose" == "true" ]] && options="--print HBhb"
 
 http ${options} \
-     GET "https://api.${SFX_REALM}.signalfx.com/v2/${endpoint}" \
+     ${verb} "https://api.${SFX_REALM}.signalfx.com/v2${endpoint}" \
      Content-Type:application/json \
      X-SF-TOKEN:$SFX_AUTH_TOKEN
