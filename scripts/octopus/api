@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Octopus REST API request
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   api <endpoint> [--verb=<verb>][--verbose]
+##?
+##? Options:
+##?   -e, --verb=<verb>  REST verb [default:GET]
+##?   -v, --verbose      Verbose output
+##?
+docs::eval "$@"
+
+# Set SPLUNK_OBSERVABILITY_REALM variable to search in your specific realm
+if [ -z "$OCTOPUS_INSTANCE" ]; then
+  log::error "OCTOPUS_INSTANCE environment variable not set"
+  exit 1
+fi
+
+if [ -z "$API_KEY" ]; then
+  log::error "API_KEY environment variable not set"
+  exit 1
+fi
+
+prefix="/"
+if [[ $endpoint != $prefix* ]]; then
+  log::error "'$endpoint' does not start with '/'"
+  exit 2
+fi
+
+options="--print b"
+[[ "$verbose" == "true" ]] && options="--print HBhb"
+
+http ${options} \
+     ${verb} "https://${OCTOPUS_INSTANCE}.octopus.app/api${endpoint}" \
+     ApiKey==${API_KEY}
