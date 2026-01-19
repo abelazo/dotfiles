@@ -1,5 +1,6 @@
 #
 # Taps
+tap "anomalyco/tap"
 tap "beeftornado/rmtree"
 tap "denisidoro/tools"
 tap "oven-sh/bun"
@@ -7,6 +8,7 @@ tap "remotemobprogramming/brew"
 #
 # brew formulae
 #
+brew "anomalyco/tap/opencode"
 brew "awscli-local"
 brew "bash"
 brew "bash-completion"
@@ -50,6 +52,7 @@ brew "yubico-piv-tool" # Yubikey PIV module
 #
 cask "1password-cli"
 cask "bitwarden"
+cask "claude-code"
 cask "gpg-suite"
 cask "hiddenbar"
 cask "rectangle"
