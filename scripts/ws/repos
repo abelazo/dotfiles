@@ -36,6 +36,7 @@ fi
 log::header "${action} in ${work_dir}"
 
 skip_dirs=(
+  .config
   .terraform
   .terragrunt-cache
   .cache
