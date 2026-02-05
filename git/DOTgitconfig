@@ -68,7 +68,7 @@
     rebase = true
 
 [push]
-    autosetupremote = true
+    autoSetupRemote = true
     gpgSign = if-asked
 
 [rebase]
