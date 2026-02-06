@@ -10,7 +10,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?   repos branches [--folder=<folder>]
 ##?   repos pull [--folder=<folder>]
-##?   repos pre-commit [--uninstall][--folder=<folder>][--hooks=<hooks>]
+##?   repos pre-commit [--uninstall][--folder=<folder>][--hooks=<hooks>][--tool=<tool>]
 ##?
 ##? Arguments:
 ##?   branches    Show current branches of current repositories
@@ -20,6 +20,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Options:
 ##?   -f, --folder=<folder>  Base folder to execute the action
 ##?   -h, --hooks=<hooks>    Space-separated list of hooks to be installed/uninstalled (e.g. 'commit-msg pre-commit pre-merge-commit prepare-commit-msg')
+##?   -t, --tool=<tool>      Tool to be used [default:pre-commit]
 ##?   -u, --uninstall        Uninstall hooks
 ##?
 docs::eval "$@"
@@ -28,6 +29,11 @@ if [ "${folder}" != "" ]; then
   work_dir=$(realpath ${folder})
 else
   [[ -z ${WS} ]] && work_dir=$(dirname ${DOTFILES_PATH}) || work_dir=${WS}
+fi
+
+if [[ "${tool}" != "pre-commit" && "${tool}" != "prek" ]]; then
+  log::error "Unknown tool ${tool}"
+  exit 1
 fi
 
 [[ "${branches}" == "true" ]] && action="Getting local branches"
@@ -77,7 +83,7 @@ while IFS= read -r -d '' gitdir; do
     candidate_hooks=()
     read -a candidate_hooks <<< "${hooks}"
 
-    subcommand="install"
+    subcommand="install -f"
     msg="Installing pre-commit hooks in $(basename $(dirname $gitdir))"
     if [ "${uninstall}" == "true" ]; then
       subcommand="uninstall"
@@ -86,8 +92,8 @@ while IFS= read -r -d '' gitdir; do
 
     if [ -f .pre-commit-config.yaml ]; then
       log::note ${msg}
-      pre-commit ${subcommand}
-      pre-commit ${subcommand} ${candidate_hooks[@]/#/-t } > /dev/null
+      ${tool} ${subcommand}
+      ${tool} ${subcommand} ${candidate_hooks[@]/#/-t } > /dev/null
     fi
   fi
   popd >& /dev/null
