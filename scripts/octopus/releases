@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+basepath=$(dirname $0)
+source "${basepath}/utils/ids.sh"
+
+##?
+##? Octopus Deploy releases
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   releases variable-update [--space-name=<space-name>][--release=<release>]
+##?
+##? Options:
+##?   -r, --release=<release>          Release
+##?   -s, --space-name=<space-name>    Space name
+##?
+docs::eval "$@"
+
+if [ -z "$OCTOPUS_INSTANCE" ]; then
+  log::error "OCTOPUS_INSTANCE environment variable not set"
+  exit 1
+fi
+
+args::verify_api_key
+
+if [ "${variable_update}" == "true" ]; then
+  space_id=$(octopus::get_space_id "${space_name}")
+  release_id=$(octopus::get_release_id "${space_id}" "${release}")
+
+  if [[ -n ${release_id} ]]; then
+    http --print hb POST "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/releases/${release_id}/snapshot-variables" \
+         ApiKey==${API_KEY}
+  else
+    exit -1
+  fi
+fi
