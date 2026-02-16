@@ -30,8 +30,8 @@ args::verify_api_key
 
 if [ "${create}" == "true" ]; then
   space_id=$(octopus::get_space_id "${space_name}")
-  release_id=$(octopus::get_release_id "${space_name}" "${release}")
-  environment_id=$(octopus::get_environment_id "${space_name}" "${environment}")
+  release_id=$(octopus::get_release_id "${space_id}" "${release}")
+  environment_id=$(octopus::get_environment_id "${space_id}" "${environment}")
 
   if [[ -n ${release_id} ]]; then
     http POST "https://${OCTOPUS_INSTANCE}.octopus.app/api/spaces/${space_id}/deployments" \
