@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##?
+##? Generates a commit message from the content of staged changes
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   conventional-commit [--scope=<scope>]
+##?
+##? Options:
+##?   -s, --scope=<scope>  Conventional commit scope
+##?
+docs::eval "$@"
+
+opencode run \
+         --model ${OPENCODE_DEFAULT_MODEL} \
+         --variant high \
+         --thinking false \
+         --command commit-message \
+         --format json \
+  | jq -s '.' | jq -r '.[] | select(.type == "text" and .part.text != "").part.text' \
+  | if [ -n "$scope" ]; then sed -E "s/^([a-z]+)(\([^)]*\))?(!)?:/\1(${scope})\3:/"; else cat; fi
