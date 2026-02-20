@@ -18,7 +18,6 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 docs::eval "$@"
 
 opencode run \
-         --model ${OPENCODE_DEFAULT_MODEL} \
          --variant high \
          --thinking false \
          --command commit-message \
