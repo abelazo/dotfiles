@@ -1,5 +1,8 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+# Skip new lines before prompt
+add_newline = false
+
 [aws]
 symbol = " "
 #format = '\[[$symbol($profile)(\($region\))(\[$duration\])]($style)\]' # With region
