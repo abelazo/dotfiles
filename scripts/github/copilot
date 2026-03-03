@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+basepath=$(dirname $0)
+
+##?
+##? Copilot
+##?
+#?? 1.0.0
+##?
+##? Usage:
+##?   copilot usage [--output=<output>]
+##?
+##? Arguments:
+##?   usage  Github Copilot usage
+##?
+##? Options:
+##?   -o, --output=<output>  Output format (csv,table) [default:table]
+##?
+docs::eval "$@"
+
+# Set GITHUB_ORGANIZATION variable to search in your specific organization
+organization=${GITHUB_ORGANIZATION:-abelazo}
+
+if [[ "${usage}" == "true" ]]; then
+  data=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /copilot_internal/user \
+           | jq -r '
+                def parsedt: split(".")[0] | strptime("%Y-%m-%dT%H:%M:%S") | mktime;
+                (
+                  ((.quota_reset_date_utc | parsedt) -
+                   (.quota_snapshots.premium_interactions.timestamp_utc | parsedt)) / 86400 | ceil
+                ) as $days |
+                [
+                  .login,
+                  .quota_snapshots.premium_interactions.entitlement,
+                  .quota_snapshots.premium_interactions.percent_remaining,
+                  .quota_snapshots.premium_interactions.quota_remaining,
+                  .quota_reset_date_utc,
+                  .quota_snapshots.premium_interactions.timestamp_utc,
+                  (.quota_snapshots.premium_interactions.quota_remaining / $days)
+                ] | @csv')
+  if [[ "${output}" == "csv" ]]; then
+    echo $data
+  else
+    echo $data | gum table --print --columns "User,Quota,% remaining,Requests remaining,Reset date,Now,Remaining requests per day"
+  fi
+fi
