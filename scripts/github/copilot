@@ -43,7 +43,7 @@ if [[ "${usage}" == "true" ]]; then
                   .quota_snapshots.premium_interactions.quota_remaining,
                   .quota_reset_date_utc,
                   .quota_snapshots.premium_interactions.timestamp_utc,
-                  (.quota_snapshots.premium_interactions.quota_remaining / $days)
+                  (.quota_snapshots.premium_interactions.quota_remaining / $days | floor)
                 ] | @csv')
   if [[ "${output}" == "csv" ]]; then
     echo $data
