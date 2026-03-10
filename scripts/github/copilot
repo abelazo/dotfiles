@@ -48,6 +48,6 @@ if [[ "${usage}" == "true" ]]; then
   if [[ "${output}" == "csv" ]]; then
     echo $data
   else
-    echo $data | gum table --print --columns "User,Quota,% remaining,Requests remaining,Reset date,Now,Remaining requests per day"
+    echo $data | gum table --print --columns "User,Requests Quota,% Quota Remaining,Requests Remaining,Reset Date,Now,Requests/day Remaining"
   fi
 fi
