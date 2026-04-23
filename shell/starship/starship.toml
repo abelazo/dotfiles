@@ -5,8 +5,8 @@
 
 [aws]
 symbol = " "
-#format = '\[[$symbol($profile)(\($region\))(\[$duration\])]($style)\]' # With region
-format = '\[[$symbol($profile)(\[$duration\])]($style)\]'               # Without region
+#format = '\[[$symbol($profile)(\($region\))(\[$duration\])]($style)\]' # Full
+format = '\[[$symbol($profile)]($style)\]'               # Smaller
 
 [azure]
 format = '\[[$symbol($subscription)]($style)\]'
