@@ -26,9 +26,9 @@ if [ "${subnets}" == "true" ]; then
   [[ "${filter}" != "" ]] && filtered_subnets=$(jq -r --arg FILTER "${filter}" '[.Subnets[] | select((.Tags[] | select(.Key == "Name").Value) | contains($FILTER))]' <<<${subnets})
 
   if [ "${output}" == "json" ]; then
-    jq -r '[.[] | {"cidr": .CidrBlock, "name": (.Tags[] | select(.Key == "Name").Value)}]' <<<${filtered_subnets}
+    jq -r '[.[] | {"cidr": .CidrBlock, "name": (.Tags[] | select(.Key == "Name").Value), "available_ips": .AvailableIpAddressCount}]' <<<${filtered_subnets}
   else
-    jq -r '.[] | [.CidrBlock, (.Tags[] | select(.Key == "Name").Value)] | @csv' <<<${filtered_subnets} | sort -t ',' -k 2 | gum table --print --columns "CIDR, Name"
+    jq -r '.[] | [.CidrBlock, (.Tags[] | select(.Key == "Name").Value), ((.CidrBlock | split("/")[1] | tonumber) as $prefix | (pow(2; 32 - $prefix) - 5) as $total | (if (.AvailableIpAddressCount / $total) < 0.25 then "⚠️  " else "" end) + (.AvailableIpAddressCount | tostring))] | @csv' <<<${filtered_subnets} | sort -t ',' -k 2 | gum table --print --columns "CIDR, Name, Available IPs"
   fi
 fi
 
