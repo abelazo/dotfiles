@@ -30,6 +30,9 @@
 [branch]
   sort = -committerdate
 
+[advice]
+  forceDeleteBranch = false
+
 [commit]
   gpgsign=true
   template = /Users/abelazo/.gitmessage
