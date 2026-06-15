@@ -95,6 +95,10 @@
 [rerere]
   enabled = true
 
+# Always use ssh instead of HTTPS
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+
 ; Project includes
 [includeIf "gitdir:~/ws/personal/"]
   path=~/ws/personal/.config/personal.gitconfig
