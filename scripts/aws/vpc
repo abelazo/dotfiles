@@ -12,6 +12,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?   vpc subnets [--filter=<filter>][--output=<output>]
 ##?   vpc prefix-list [--filter=<filter>][--output=<output>]
+##?   vpc vpce [--output=<output>]
 ##?
 ##? Options:
 ##?   -f, --filter=<filter>  Word to be contained in the filter (subnet, prefix-list)
@@ -72,5 +73,20 @@ if [ "${prefix_list}" == "true" ]; then
       | @csv
     ' <<<"${pl}" \
       | gum table --print --columns "ID,Name"
+  fi
+fi
+
+if [ "${vpce}" == "true" ]; then
+  vpce=$(aws ec2 describe-vpc-endpoints)
+
+  if [ "${output}" == "json" ]; then
+    jq -r '.VpcEndpoints' <<<"${vpce}"
+  else
+    jq -r '
+      .VpcEndpoints[]
+      |  [((.Tags // [])[] | select(.Key == "Name") | .Value) // "-", .VpcEndpointType, .ServiceName]
+      | @csv
+    ' <<<"${vpce}" \
+      | gum table --print --columns "Name,Type,Service"
   fi
 fi
