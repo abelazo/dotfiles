@@ -1,19 +1,19 @@
 #
 # Taps
-tap "anomalyco/tap"
-tap "beeftornado/rmtree"
-tap "denisidoro/tools"
-tap "oven-sh/bun"
-tap "remotemobprogramming/brew"
+tap "anomalyco/tap", trusted: true
+tap "beeftornado/rmtree", trusted: true
+tap "denisidoro/tools", trusted: true
+tap "oven-sh/bun", trusted: true
+tap "remotemobprogramming/brew", trusted: true
 #
 # brew formulae
 #
-brew "anomalyco/tap/opencode"
+brew "anomalyco/tap/opencode", trusted: true
 brew "bash"
 brew "bash-completion"
 brew "bat"
 brew "btop"
-brew "oven-sh/bun/bun"
+brew "oven-sh/bun/bun", trusted: true
 brew "coreutils"
 brew "difftastic"
 brew "direnv"
@@ -32,7 +32,7 @@ brew "httpie"
 brew "ispell"
 brew "jc"
 brew "jq"
-brew "mob"
+brew "mob", trusted: true
 brew "nono"
 brew "nvm"
 brew "openssh"
