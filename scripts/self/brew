@@ -10,7 +10,7 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   brew install [<additional_brew_file>...][--cleanup]
-##?   brew upgrade [--yes]
+##?   brew upgrade
 ##?
 ##? Commands:
 ##?   install  Installs all brew formulae present in core and addtional files
@@ -21,7 +21,6 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?
 ##? Options:
 ##?   -c, --cleanup  Forces cleanup of brew installation to match given Brewfiles
-##?   -y, --yes      Upgrades all outdated formulae without asking for confirmation
 ##?
 docs::eval "$@"
 
@@ -69,7 +68,7 @@ if [ "${install}" == "true" ]; then
 fi
 
 if [ "${upgrade}" == "true" ]; then
-  log::header "Upgrading homebrew formulae"
+  log::header "Upgrading formulae"
   brew update &> /dev/null
   log::note "Obtaining outdated formulae"
   outdated=$(brew outdated --quiet)
@@ -77,20 +76,8 @@ if [ "${upgrade}" == "true" ]; then
   [[ -z ${outdated} ]] && exit # No additional installation required
 
   brew outdated --verbose
-  if [ "${yes}" == "true" ]; then
-    upgrade_confirmation="y"
-  else
-    echo -n "Do you want to upgrade outdated formulae [y/N]: "
-    read input
-
-    input=$([[ -z ${input} ]] && echo "n" || echo ${input})
-    upgrade_confirmation=$(echo ${input} | tr '[:upper:]' '[:lower:]')
-  fi
-
-  if [ "${upgrade_confirmation}" == "y" ]; then
-    log::note "Upgrading outdated formulae"
-    brew upgrade
-    log::note "Cleaning up"
-    brew cleanup
-  fi
+  log::note "Upgrading outdated formulae"
+  brew upgrade
+  log::note "Cleaning up"
+  brew cleanup
 fi
