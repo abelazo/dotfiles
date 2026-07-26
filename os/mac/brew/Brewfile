@@ -7,7 +7,7 @@ tap "remotemobprogramming/brew", trusted: true
 #
 # brew formulae
 #
-brew "opencode", trusted: true
+brew "act"
 brew "bash"
 brew "bash-completion"
 brew "bat"
@@ -35,6 +35,7 @@ brew "jq"
 brew "mob", trusted: true
 brew "nono"
 brew "nvm"
+brew "opencode", trusted: true
 brew "openssh"
 brew "pre-commit"
 brew "prek"
