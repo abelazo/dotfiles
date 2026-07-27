@@ -8,6 +8,7 @@ tap "remotemobprogramming/brew", trusted: true
 # brew formulae
 #
 brew "act"
+brew "awscli"
 brew "bash"
 brew "bash-completion"
 brew "bat"
@@ -48,7 +49,9 @@ brew "ripgrep"
 brew "rtk"
 brew "shellcheck"
 brew "starship"
+brew "tfenv"
 brew "tree"
+brew "uv"
 brew "watch"
 brew "wget"
 brew "yank"
