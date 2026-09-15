@@ -10,10 +10,11 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 #?? 1.0.0
 ##?
 ##? Usage:
-##?   api [--verb=<verb>] <url>
+##?   api [--verb=<verb>][--verbose] <url>
 ##?
 ##? Options:
-##?   -v, --verb=<verb>  HTTP verb (GET, POST, PUT) [default: GET]
+##?   -b, --verb=<verb>  HTTP verb (GET, POST, PUT) [default: GET]
+##?   -v, --verbose      Verbose output
 ##?
 docs::eval "$@"
 
@@ -24,8 +25,10 @@ if [ -z "$JWT_AUTH_TOKEN" ]; then
   exit 1
 fi
 
-set -x
-http \
+options="--print b"
+[[ "${verbose}" == "true" ]] && options="--print HBhb"
+
+http ${options} \
   --auth-type bearer \
   --auth ${JWT_AUTH_TOKEN} \
   "${verb}" "${backstage_base_url}/api${url}" \
