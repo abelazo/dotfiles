@@ -13,18 +13,16 @@ basepath=$(dirname $0)
 ##?
 ##? Usage:
 ##?   user list
-##?   user teams --user=<user> [--verbose]
-##?   user contribution --user=<user> [--year=<year>]
+##?   user contributions --user=<user> --search=<search>
 ##?
 ##? Arguments:
-##?   list          List all users of a Github organization
-##?   teams         List teams of a given user
-##?   contribution  List user contributions
+##?   list           List all users of a Github organization
+##?   contributions  Find contributions of the given user
 ##?
 ##? Options:
-##?   -u, --user=<user>   Github user name
-##?   -v, --verbose      Verbose output
-##?   -y, --year=<year>  Year of the contribution [default:2024]
+##?   -s, --seach=<search>  Search string to filter contributions
+##?   -u, --user=<user>     Github user name
+##?   -v, --verbose         Verbose output
 ##?
 docs::eval "$@"
 
@@ -35,34 +33,6 @@ if [[ "${list}" == "true" ]]; then
   gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/orgs/${organization}/members" --paginate | jq -r .[].login | sort
 fi
 
-if [[ "$teams" == "true" ]]; then
-  log::header "${user} teams"
-  teams_query_file="${basepath}/queries/teams.graphql"
-
-  options="--print=b"
-
-  results=$(http --auth-type bearer -a ${JWT_AUTH_TOKEN} ${options} https://api.github.com/graphql "Accept: application/vnd.github.v4.idl" query="$( cat ${teams_query_file} )" variables='{"organization": "'${organization}'", "username": "'${user}'"}')
-
-  if [[ "${verbose}" == "true" ]]; then
-    jq . <<<${results}
-  else
-    jq -r '.data.organization.teams.edges[].node.name' <<<${results}
-  fi
-fi
-
-if [[ "$contribution" == "true" ]]; then
-  commits_query_file="${basepath}/queries/contributions.graphql"
-  options="--print=b"
-  raw_results=$(http --auth-type bearer -a ${JWT_AUTH_TOKEN} ${options} https://api.github.com/graphql "Accept: application/vnd.github.v4.idl" query="$( cat ${commits_query_file} )" variables='{"username": "'${user}'"}')
-
-  year_result=$(jq '[.data.user.contributionsCollection.contributionCalendar.weeks[].contributionDays[] | select(.date | startswith("'${year}'")) | .contributionCount] | add // 0' <<<${raw_results})
-
-  log::header "${user} contribution in ${year} (${year_result})"
-  header=$(printf '"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"\n')
-  result=""
-  for month in $(seq -f "%02g" 1 12); do
-    monthly_result=$(jq '[.data.user.contributionsCollection.contributionCalendar.weeks[].contributionDays[] | select(.date | startswith("'${year}'-'${month}'")) | .contributionCount] | add // 0' <<<${raw_results})
-    [[ ${result} == "" ]] && result=$(printf "\"${monthly_result}\"") || result=${result},$(printf "\"${monthly_result}\"")
-  done
-  (echo $header && echo $result) | gum table --print
+if [[ "${contributions}" == "true" ]]; then
+  gh api search/commits -X GET --raw-field q="\"${search}\" org:${GITHUB_ORGANIZATION} author:${user}" --jq '.items[] | {repo: .repository.full_name, author: .author.login, date: .commit.author.date}'
 fi
