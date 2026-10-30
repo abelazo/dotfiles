@@ -47,6 +47,7 @@ skip_dirs=(
   .terragrunt-cache
   .cache
   node_modules
+  workspace
 )
 
 # Build the prune expression: \( -path "*/dir1" -o -path "*/dir2" ... \)
