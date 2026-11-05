@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -uo pipefail
 
 source "$DOTFILES_PATH/scripts/core/_main.sh"
 
@@ -22,6 +22,11 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##?   -v, --vault=<vault>      Vault where the secret is stored
 ##?
 docs::eval "$@"
+
+op whoami >& /dev/null
+if [ "$?" -ne 0 ]; then
+  eval $(op signin)
+fi
 
 if [ "${list}" == "true" ]; then
   op item list --format=json | jq -r '["Item","Vault"], ["----", "-----"], (.[] | [.title, .vault.name]) | @tsv' | column -ts $'\t'
